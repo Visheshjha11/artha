@@ -85,7 +85,7 @@ export const HeroSection: React.FC = () => {
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.25rem] font-medium tracking-[-0.04em] text-gray-900 leading-[1.08] mb-5">
           The personal finance <br className="hidden sm:inline" />
           app for everyone <br />
-          <span className="text-gray-400 font-normal">(by everyone)</span>
+          {/* <span className="text-gray-400 font-normal">(by everyone)</span> */}
         </h1>
 
         {/* Subtitle */}

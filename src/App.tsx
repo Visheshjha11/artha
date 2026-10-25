@@ -1,12 +1,12 @@
 import React from 'react';
-import { Navbar } from './components/Navbar';
-import { HeroSection } from './components/HeroSection';
-import { DashboardPreview } from './components/DashboardPreview';
-import { InteractiveFeaturesText } from './components/InteractiveFeaturesText';
-import { TransactionsSection } from './components/TransactionsSection';
-import { SecuritySection } from './components/SecuritySection';
-import { AiSection } from './components/AiSection';
-import { Footer } from './components/Footer';
+import { Navbar } from './components/landing/Navbar';
+import { HeroSection } from './components/landing/HeroSection';
+import { DashboardPreview } from './components/landing/DashboardPreview';
+import { TransactionsSection } from './components/landing/TransactionsSection';
+import { InteractiveFeaturesText } from './components/landing/InteractiveFeaturesText';
+import { SecuritySection } from './components/landing/SecuritySection';
+import { AiSection } from './components/landing/AiSection';
+import { Footer } from './components/landing/Footer';
 
 export const App: React.FC = () => {
   return (
@@ -21,11 +21,11 @@ export const App: React.FC = () => {
         {/* 3. img2: Floating Dashboard Preview */}
         <DashboardPreview />
 
-        {/* 4. img3: Interactive Highlighted Features Text */}
-        <InteractiveFeaturesText />
-
-        {/* 5. img4: Transactions Handled Your Way */}
+        {/* 4. img4: Transactions Handled Your Way */}
         <TransactionsSection />
+
+        {/* 5. img3: Interactive Highlighted Features Text */}
+        <InteractiveFeaturesText />
 
         {/* 6. img5: Uncompromising Security & Radical Transparency */}
         <SecuritySection />

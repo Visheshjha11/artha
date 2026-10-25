@@ -141,10 +141,6 @@ export const Navbar: React.FC = () => {
                 </div>
               )}
             </div>
-
-            <a href="#pricing" className="px-3 py-1.5 rounded-lg hover:text-gray-950 hover:bg-black/[0.04] transition-colors">
-              Pricing
-            </a>
             
             <a href="https://github.com/Visheshjha11/artha" target="_blank" rel="noreferrer" className="px-3 py-1.5 rounded-lg hover:text-gray-950 hover:bg-black/[0.04] transition-colors flex items-center gap-1">
               Contribute
