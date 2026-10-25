@@ -10,7 +10,7 @@ import { Footer } from './components/landing/Footer';
 
 export const App: React.FC = () => {
   return (
-    <div className="min-h-screen w-full flex flex-col bg-[#F9F9F9] text-[#1a1a1a] selection:bg-emerald-100 selection:text-emerald-900">
+    <div className="min-h-dvh w-full flex flex-col overflow-x-clip bg-[#F9F9F9] text-[#1a1a1a] selection:bg-emerald-100 selection:text-emerald-900">
       {/* 1. Header & Navigation with Rainbow Strip */}
       <Navbar />
 

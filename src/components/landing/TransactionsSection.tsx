@@ -27,7 +27,7 @@ export const TransactionsSection: React.FC = () => {
       
       {/* Title matching Image 4 */}
       <div className="text-center mb-12">
-        <h2 className="text-4xl sm:text-5xl md:text-[3.5rem] font-medium tracking-[-0.05em] text-gray-900 leading-[1.08] mb-3">
+        <h2 className="text-[2rem] min-[400px]:text-4xl sm:text-5xl md:text-[3.5rem] font-medium tracking-[-0.05em] text-gray-900 leading-[1.08] mb-3">
           Transactions <br />
           <span className="text-gray-400 font-normal">handled your way</span>
         </h2>
@@ -51,30 +51,30 @@ export const TransactionsSection: React.FC = () => {
 
           <button className="flex items-center gap-2 px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-2xs">
             <SlidersHorizontal className="w-4 h-4 text-gray-500" />
-            <span>Filter</span>
+            <span className="hidden min-[400px]:inline">Filter</span>
           </button>
         </div>
 
         {/* Transactions Table */}
         <div className="w-full overflow-x-auto">
-          <div className="min-w-[680px]">
+          <div className="min-w-0">
             
             {/* Table Header */}
             <div className="grid grid-cols-12 px-4 py-2 text-[11px] font-mono font-medium text-gray-400 uppercase tracking-wider border-b border-gray-100">
               <div className="col-span-1 flex items-center">
                 <Square className="w-4 h-4 text-gray-300" />
               </div>
-              <div className="col-span-5">Transaction</div>
-              <div className="col-span-2">Category</div>
-              <div className="col-span-2">Account</div>
-              <div className="col-span-2 text-right">Amount</div>
+              <div className="col-span-7 sm:col-span-5">Transaction</div>
+              <div className="hidden sm:block sm:col-span-3 md:col-span-2">Category</div>
+              <div className="hidden md:block col-span-2">Account</div>
+              <div className="col-span-4 sm:col-span-3 md:col-span-2 text-right">Amount</div>
             </div>
 
             {/* Date Group 1: March 8, 2025 */}
             <div className="mt-4">
               <div className="flex items-center justify-between px-4 py-2 bg-gray-50/60 rounded-lg text-xs font-mono text-gray-500 mb-1">
                 <span className="font-semibold tracking-wider text-[11px]">MARCH 8, 2025 · 2</span>
-                <span className="font-semibold text-gray-700">+$6,001.42</span>
+                <span className="font-semibold text-gray-700">+₹88,214.00</span>
               </div>
 
               {/* Row 1: Interest Payment */}
@@ -90,29 +90,29 @@ export const TransactionsSection: React.FC = () => {
                   )}
                 </div>
                 
-                <div className="col-span-5 flex items-center gap-3">
+                <div className="col-span-7 sm:col-span-5 flex items-center gap-3 min-w-0">
                   <div className="w-8 h-8 rounded-full bg-[#1170cf] flex items-center justify-center text-white font-bold text-xs shrink-0 shadow-2xs">
                     <svg className="w-4 h-4 fill-white" viewBox="0 0 24 24">
                       <path d="M12 2L2 12l10 10 10-10L12 2zm0 3.5L18.5 12 12 18.5 5.5 12 12 5.5z"/>
                     </svg>
                   </div>
-                  <span className="font-medium text-gray-900">Interest Payment</span>
+                  <span className="font-medium text-gray-900 truncate">Interest Payment</span>
                 </div>
 
-                <div className="col-span-2">
+                <div className="hidden sm:block sm:col-span-3 md:col-span-2">
                   <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/50">
                     <Percent className="w-3 h-3 text-emerald-600" />
                     <span>Interest</span>
                   </span>
                 </div>
 
-                <div className="col-span-2 flex items-center gap-1.5 text-xs text-gray-600 font-mono">
+                <div className="hidden md:flex col-span-2 items-center gap-1.5 text-xs text-gray-600 font-mono">
                   <div className="w-4 h-4 rounded-full bg-[#1170cf] shrink-0"></div>
                   <span>Savings •••• 3432</span>
                 </div>
 
-                <div className="col-span-2 text-right font-mono font-semibold text-emerald-600">
-                  +$1.42
+                <div className="col-span-4 sm:col-span-3 md:col-span-2 text-right font-mono font-semibold text-emerald-600">
+                  +₹3,214.00
                 </div>
               </div>
 
@@ -129,30 +129,30 @@ export const TransactionsSection: React.FC = () => {
                   )}
                 </div>
                 
-                <div className="col-span-5 flex items-center gap-3">
+                <div className="col-span-7 sm:col-span-5 flex items-center gap-3 min-w-0">
                   <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-bold text-xs shrink-0">
                     I
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-medium text-gray-900">Incoming from Acme Ltd</span>
-                    <RefreshCw className="w-3.5 h-3.5 text-gray-400" />
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <span className="font-medium text-gray-900 truncate">Incoming from Acme Ltd</span>
+                    <RefreshCw className="w-3.5 h-3.5 text-gray-400 shrink-0" />
                   </div>
                 </div>
 
-                <div className="col-span-2">
+                <div className="hidden sm:block sm:col-span-3 md:col-span-2">
                   <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200/50">
                     <Banknote className="w-3 h-3 text-amber-600" />
                     <span>Payroll</span>
                   </span>
                 </div>
 
-                <div className="col-span-2 flex items-center gap-1.5 text-xs text-gray-600 font-mono">
+                <div className="hidden md:flex col-span-2 items-center gap-1.5 text-xs text-gray-600 font-mono">
                   <div className="w-4 h-4 rounded-full bg-red-600 shrink-0"></div>
                   <span>Savings •••• 1566</span>
                 </div>
 
-                <div className="col-span-2 text-right font-mono font-semibold text-emerald-600">
-                  +$6,000.00
+                <div className="col-span-4 sm:col-span-3 md:col-span-2 text-right font-mono font-semibold text-emerald-600">
+                  +₹85,000.00
                 </div>
               </div>
             </div>
@@ -161,7 +161,7 @@ export const TransactionsSection: React.FC = () => {
             <div className="mt-4">
               <div className="flex items-center justify-between px-4 py-2 bg-gray-50/60 rounded-lg text-xs font-mono text-gray-500 mb-1">
                 <span className="font-semibold tracking-wider text-[11px]">MARCH 5, 2025 · 2</span>
-                <span className="font-semibold text-gray-700">$124.43</span>
+                <span className="font-semibold text-gray-700">₹5,988.00</span>
               </div>
 
               {/* Row 3: Amazon Order */}
@@ -177,27 +177,27 @@ export const TransactionsSection: React.FC = () => {
                   )}
                 </div>
                 
-                <div className="col-span-5 flex items-center gap-3">
+                <div className="col-span-7 sm:col-span-5 flex items-center gap-3 min-w-0">
                   <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center text-white font-bold text-xs shrink-0">
                     <span className="font-sans text-xs">a</span>
                   </div>
-                  <span className="font-medium text-gray-900">Amazon Order</span>
+                  <span className="font-medium text-gray-900 truncate">Amazon Order</span>
                 </div>
 
-                <div className="col-span-2">
+                <div className="hidden sm:block sm:col-span-3 md:col-span-2">
                   <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200/50">
                     <ShoppingCart className="w-3 h-3 text-blue-600" />
                     <span>Shopping</span>
                   </span>
                 </div>
 
-                <div className="col-span-2 flex items-center gap-1.5 text-xs text-gray-600 font-mono">
+                <div className="hidden md:flex col-span-2 items-center gap-1.5 text-xs text-gray-600 font-mono">
                   <div className="w-4 h-4 rounded-full bg-[#1170cf] shrink-0"></div>
                   <span>Savings •••• 2244</span>
                 </div>
 
-                <div className="col-span-2 text-right font-mono font-semibold text-gray-900">
-                  -$111.44
+                <div className="col-span-4 sm:col-span-3 md:col-span-2 text-right font-mono font-semibold text-gray-900">
+                  -₹4,799.00
                 </div>
               </div>
 
@@ -214,32 +214,32 @@ export const TransactionsSection: React.FC = () => {
                   )}
                 </div>
                 
-                <div className="col-span-5 flex items-center gap-3">
+                <div className="col-span-7 sm:col-span-5 flex items-center gap-3 min-w-0">
                   <div className="w-8 h-8 rounded-full bg-[#1DB954] flex items-center justify-center text-black font-bold text-xs shrink-0">
                     <svg className="w-4 h-4 fill-black" viewBox="0 0 24 24">
                       <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424c-.18.295-.563.387-.857.207-2.35-1.435-5.308-1.76-8.793-.963-.335.077-.67-.133-.746-.468-.077-.334.132-.67.467-.746 3.808-.87 7.076-.502 9.722 1.113.294.18.386.562.207.857zm1.226-2.723c-.226.367-.706.482-1.072.257-2.687-1.652-6.785-2.131-9.965-1.166-.413.125-.85-.107-.975-.52-.125-.413.107-.85.52-.975 3.632-1.102 8.147-.568 11.235 1.332.366.226.482.707.257 1.072zm.106-2.835C14.692 8.95 9.375 8.775 6.297 9.71c-.493.15-.99-.12-1.14-.613-.15-.494.12-.99.613-1.14 3.54-1.074 9.435-.873 13.17 1.344.44.262.585.833.323 1.273-.262.44-.833.585-1.273.323z"/>
                     </svg>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-medium text-gray-900">Spotify Annual Subscription</span>
-                    <RefreshCw className="w-3.5 h-3.5 text-gray-400" />
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <span className="font-medium text-gray-900 truncate">Spotify Annual Subscription</span>
+                    <RefreshCw className="w-3.5 h-3.5 text-gray-400 shrink-0" />
                   </div>
                 </div>
 
-                <div className="col-span-2">
+                <div className="hidden sm:block sm:col-span-3 md:col-span-2">
                   <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-pink-50 text-pink-700 border border-pink-200/50">
                     <Repeat className="w-3 h-3 text-pink-600" />
                     <span>Subscription</span>
                   </span>
                 </div>
 
-                <div className="col-span-2 flex items-center gap-1.5 text-xs text-gray-600 font-mono">
+                <div className="hidden md:flex col-span-2 items-center gap-1.5 text-xs text-gray-600 font-mono">
                   <div className="w-4 h-4 rounded-full bg-red-600 shrink-0"></div>
                   <span>Checking •••• 2441</span>
                 </div>
 
-                <div className="col-span-2 text-right font-mono font-semibold text-gray-900">
-                  -$12.99
+                <div className="col-span-4 sm:col-span-3 md:col-span-2 text-right font-mono font-semibold text-gray-900">
+                  -₹1,189.00
                 </div>
               </div>
             </div>
@@ -250,7 +250,7 @@ export const TransactionsSection: React.FC = () => {
       </div>
 
       {/* 3 Feature Grid Cards below Transactions Preview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
         
         {/* Card 1 */}
         <div className="flex flex-col gap-3 group">
@@ -280,7 +280,7 @@ export const TransactionsSection: React.FC = () => {
               </div>
               <div className="flex flex-wrap gap-1">
                 <span className="px-2 py-0.5 rounded-md bg-gray-100 text-[10px] text-gray-700 font-mono">Date: 2025</span>
-                <span className="px-2 py-0.5 rounded-md bg-blue-50 text-[10px] text-blue-700 font-mono">&gt; $100</span>
+                <span className="px-2 py-0.5 rounded-md bg-blue-50 text-[10px] text-blue-700 font-mono">&gt; ₹1,000</span>
               </div>
             </div>
           </div>

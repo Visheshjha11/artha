@@ -29,7 +29,7 @@ export const DashboardPreview: React.FC = () => {
       <div className="bg-white rounded-2xl md:rounded-3xl border border-black/10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.12),0_0_0_1px_rgba(0,0,0,0.03)] overflow-hidden transition-all duration-300">
         
         {/* Layout container: Left sidebar + Main workspace */}
-        <div className="flex flex-col md:flex-row min-h-[780px]">
+        <div className="flex flex-col md:flex-row md:min-h-[780px]">
           
           {/* Left Mini Rail / Navigation (Sidebar) */}
           <aside className="hidden md:flex flex-col items-center justify-between py-5 px-3 border-r border-gray-100 bg-[#FAFAFA] w-18 shrink-0">
@@ -113,7 +113,7 @@ export const DashboardPreview: React.FC = () => {
               <div className="lg:col-span-7 flex flex-col gap-5">
                 
                 {/* 1. Cashflow Card */}
-                <div className="bg-white rounded-2xl border border-gray-200/80 p-5 shadow-xs">
+                <div className="bg-white rounded-2xl border border-gray-200/80 p-4 sm:p-5 shadow-xs">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-semibold text-gray-900 text-base">Cashflow</h3>
                     <div className="relative">
@@ -131,153 +131,101 @@ export const DashboardPreview: React.FC = () => {
                   </div>
 
                   {/* SVG Sankey Diagram */}
+                  <p className="sm:hidden text-[10px] font-mono text-gray-400 text-right mb-1">Swipe sideways to explore →</p>
                   <div className="w-full overflow-x-auto">
-                    <div className="min-w-[440px] h-[270px] relative">
-                      <svg viewBox="0 0 520 260" className="w-full h-full text-xs font-mono select-none">
+                    <div className="min-w-[440px] h-[240px] sm:h-[270px] relative">
+                      <svg viewBox="0 0 520 260" role="img" aria-label="Monthly cashflow: income flowing into expenses and surplus" className="w-full h-full select-none">
                         <defs>
-                          {/* Flow Gradients */}
-                          <linearGradient id="flow-salary" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="#22c55e" stopOpacity="0.35" />
-                            <stop offset="100%" stopColor="#22c55e" stopOpacity="0.45" />
-                          </linearGradient>
-                          <linearGradient id="flow-freelance" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="#22c55e" stopOpacity="0.3" />
-                            <stop offset="100%" stopColor="#22c55e" stopOpacity="0.45" />
-                          </linearGradient>
-                          <linearGradient id="flow-uncat-in" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="#64748b" stopOpacity="0.25" />
-                            <stop offset="100%" stopColor="#22c55e" stopOpacity="0.45" />
-                          </linearGradient>
-                          <linearGradient id="flow-housing" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="#22c55e" stopOpacity="0.4" />
-                            <stop offset="100%" stopColor="#b91c1c" stopOpacity="0.4" />
-                          </linearGradient>
-                          <linearGradient id="flow-food" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="#22c55e" stopOpacity="0.4" />
-                            <stop offset="100%" stopColor="#f97316" stopOpacity="0.4" />
-                          </linearGradient>
-                          <linearGradient id="flow-transport" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="#22c55e" stopOpacity="0.4" />
-                            <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.4" />
-                          </linearGradient>
-                          <linearGradient id="flow-entertainment" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="#22c55e" stopOpacity="0.4" />
-                            <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.4" />
-                          </linearGradient>
-                          <linearGradient id="flow-surplus" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="#22c55e" stopOpacity="0.4" />
-                            <stop offset="100%" stopColor="#10b981" stopOpacity="0.55" />
-                          </linearGradient>
+                          <linearGradient id="sk-in-0" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#10b981" stopOpacity="0.22" /><stop offset="1" stopColor="#16a34a" stopOpacity="0.10" /></linearGradient>
+                          <linearGradient id="sk-in-1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#059669" stopOpacity="0.22" /><stop offset="1" stopColor="#16a34a" stopOpacity="0.10" /></linearGradient>
+                          <linearGradient id="sk-in-2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#34d399" stopOpacity="0.22" /><stop offset="1" stopColor="#16a34a" stopOpacity="0.10" /></linearGradient>
+                          <linearGradient id="sk-out-0" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#16a34a" stopOpacity="0.10" /><stop offset="1" stopColor="#dc2626" stopOpacity="0.24" /></linearGradient>
+                          <linearGradient id="sk-out-1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#16a34a" stopOpacity="0.10" /><stop offset="1" stopColor="#ea580c" stopOpacity="0.24" /></linearGradient>
+                          <linearGradient id="sk-out-2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#16a34a" stopOpacity="0.10" /><stop offset="1" stopColor="#2563eb" stopOpacity="0.24" /></linearGradient>
+                          <linearGradient id="sk-out-3" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#16a34a" stopOpacity="0.10" /><stop offset="1" stopColor="#7c3aed" stopOpacity="0.24" /></linearGradient>
+                          <linearGradient id="sk-out-4" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#16a34a" stopOpacity="0.10" /><stop offset="1" stopColor="#db2777" stopOpacity="0.24" /></linearGradient>
+                          <linearGradient id="sk-out-5" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#16a34a" stopOpacity="0.10" /><stop offset="1" stopColor="#64748b" stopOpacity="0.24" /></linearGradient>
+                          <linearGradient id="sk-out-6" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#16a34a" stopOpacity="0.10" /><stop offset="1" stopColor="#16a34a" stopOpacity="0.24" /></linearGradient>
                         </defs>
 
-                        {/* --- INCOMING FLOWS (Left to Center) --- */}
-                        {/* Salary to Central Node */}
-                        <path d="M 75 90 C 130 90, 150 115, 205 115 L 205 165 C 150 165, 130 125, 75 125 Z" fill="url(#flow-salary)" />
-                        {/* Freelance */}
-                        <path d="M 75 133 C 130 133, 150 165, 205 165 L 205 174 C 150 174, 130 142, 75 142 Z" fill="url(#flow-freelance)" />
-                        {/* Uncategorized */}
-                        <path d="M 75 165 C 130 165, 150 175, 205 175 L 205 205 C 150 205, 130 195, 75 195 Z" fill="url(#flow-uncat-in)" />
+                        {/* Ribbons */}
+                        <path d="M 18 60.9 C 134 60.9, 134 74.9, 250 74.9 L 250 157.3 C 134 157.3, 134 143.3, 18 143.3 Z" fill="url(#sk-in-0)"><title>Salary: ₹3,05,000</title></path>
+                        <path d="M 18 157.3 C 134 157.3, 134 157.3, 250 157.3 L 250 180.2 C 134 180.2, 134 180.2, 18 180.2 Z" fill="url(#sk-in-1)"><title>Freelance: ₹85,000</title></path>
+                        <path d="M 18 194.2 C 134 194.2, 134 180.2, 250 180.2 L 250 185.1 C 134 185.1, 134 199.1, 18 199.1 Z" fill="url(#sk-in-2)"><title>Dividends: ₹18,000</title></path>
+                        <path d="M 262 74.9 C 380 74.9, 380 20.9, 498 20.9 L 498 37.7 C 380 37.7, 380 91.7, 262 91.7 Z" fill="url(#sk-out-0)"><title>Housing: ₹62,000</title></path>
+                        <path d="M 262 91.7 C 380 91.7, 380 55.7, 498 55.7 L 498 63.2 C 380 63.2, 380 99.2, 262 99.2 Z" fill="url(#sk-out-1)"><title>Food &amp; Dining: ₹28,000</title></path>
+                        <path d="M 262 99.2 C 380 99.2, 380 81.2, 498 81.2 L 498 85 C 380 85, 380 103, 262 103 Z" fill="url(#sk-out-2)"><title>Transportation: ₹14,000</title></path>
+                        <path d="M 262 103 C 380 103, 380 103, 498 103 L 498 106 C 380 106, 380 106, 262 106 Z" fill="url(#sk-out-3)"><title>Entertainment: ₹11,000</title></path>
+                        <path d="M 262 106 C 380 106, 380 124, 498 124 L 498 134.5 C 380 134.5, 380 116.5, 262 116.5 Z" fill="url(#sk-out-4)"><title>Shopping / Travel / Care: ₹39,000</title></path>
+                        <path d="M 262 116.5 C 380 116.5, 380 152.5, 498 152.5 L 498 163.3 C 380 163.3, 380 127.3, 262 127.3 Z" fill="url(#sk-out-5)"><title>Taxes (advance + TDS): ₹40,000</title></path>
+                        <path d="M 262 127.3 C 380 127.3, 380 181.3, 498 181.3 L 498 239.1 C 380 239.1, 380 185.1, 262 185.1 Z" fill="url(#sk-out-6)"><title>Surplus: ₹2,14,000</title></path>
 
-                        {/* --- OUTGOING FLOWS (Center to Right) --- */}
-                        {/* Housing */}
-                        <path d="M 215 110 C 265 110, 290 35, 345 35 L 345 52 C 290 52, 265 125, 215 125 Z" fill="url(#flow-housing)" />
-                        {/* Food */}
-                        <path d="M 215 125 C 265 125, 290 60, 345 60 L 345 68 C 290 68, 265 133, 215 133 Z" fill="url(#flow-food)" />
-                        {/* Transportation */}
-                        <path d="M 215 133 C 265 133, 290 76, 345 76 L 345 83 C 290 83, 265 140, 215 140 Z" fill="url(#flow-transport)" />
-                        {/* Entertainment */}
-                        <path d="M 215 140 C 265 140, 290 92, 345 92 L 345 98 C 290 98, 265 146, 215 146 Z" fill="url(#flow-entertainment)" />
-                        {/* Multiple subtle expense ribbons */}
-                        <path d="M 215 146 C 270 146, 295 120, 345 120 L 345 155 C 295 155, 270 180, 215 180 Z" fill="#94a3b8" opacity="0.3" />
-                        {/* Surplus flow */}
-                        <path d="M 215 180 C 265 180, 290 220, 345 220 L 345 238 C 290 238, 265 205, 215 205 Z" fill="url(#flow-surplus)" />
-
-                        {/* --- LEFT NODES (Labels + Bars) --- */}
-                        {/* Salary */}
-                        <rect x="68" y="90" width="7" height="35" rx="2" fill="#22c55e" />
-                        <text x="60" y="102" textAnchor="end" className="text-[10px] font-sans fill-gray-900 font-medium">Salary</text>
-                        <text x="60" y="115" textAnchor="end" className="text-[9px] fill-gray-400 font-mono">$17,248.00</text>
-
-                        {/* Freelance */}
-                        <rect x="68" y="133" width="7" height="9" rx="2" fill="#22c55e" />
-                        <text x="60" y="138" textAnchor="end" className="text-[9px] font-sans fill-gray-900 font-medium">Freelance</text>
-                        <text x="60" y="148" textAnchor="end" className="text-[8px] fill-gray-400 font-mono">$1,419.00</text>
-
-                        {/* Uncategorized In */}
-                        <rect x="68" y="165" width="7" height="30" rx="2" fill="#64748b" />
-                        <text x="60" y="177" textAnchor="end" className="text-[9px] font-sans fill-gray-900 font-medium">Uncategorized</text>
-                        <text x="60" y="188" textAnchor="end" className="text-[8px] fill-gray-400 font-mono">$10,834.00</text>
-
-                        {/* --- CENTER JUNCTION NODE --- */}
-                        <rect x="205" y="105" width="10" height="100" rx="2" fill="#22c55e" />
-                        <text x="210" y="218" textAnchor="middle" className="text-[9px] font-sans fill-gray-900 font-semibold">Cash Flow</text>
-                        <text x="210" y="228" textAnchor="middle" className="text-[8px] fill-gray-400 font-mono">$29,501.00</text>
-
-                        {/* --- RIGHT DESTINATION NODES --- */}
-                        {/* Housing */}
-                        <rect x="345" y="35" width="6" height="17" rx="1.5" fill="#b91c1c" />
-                        <text x="358" y="42" className="text-[9px] font-sans fill-gray-900 font-medium">Housing</text>
-                        <text x="358" y="51" className="text-[8px] fill-gray-400 font-mono">$9,559.00</text>
-
-                        {/* Food & Dining */}
-                        <rect x="345" y="60" width="6" height="8" rx="1" fill="#f97316" />
-                        <text x="358" y="66" className="text-[8px] font-sans fill-gray-900 font-medium">Food & Dining</text>
-                        <text x="358" y="74" className="text-[7.5px] fill-gray-400 font-mono">$761.00</text>
-
-                        {/* Transportation */}
-                        <rect x="345" y="78" width="6" height="6" rx="1" fill="#3b82f6" />
-                        <text x="358" y="83" className="text-[8px] font-sans fill-gray-900 font-medium">Transportation</text>
-                        <text x="358" y="90" className="text-[7.5px] fill-gray-400 font-mono">$555.00</text>
-
-                        {/* Entertainment */}
-                        <rect x="345" y="94" width="6" height="5" rx="1" fill="#8b5cf6" />
-                        <text x="358" y="99" className="text-[8px] font-sans fill-gray-900 font-medium">Entertainment</text>
-                        <text x="358" y="106" className="text-[7.5px] fill-gray-400 font-mono">$445.00</text>
-
-                        {/* Others */}
-                        <text x="358" y="125" className="text-[8px] font-sans fill-gray-700">Shopping / Travel / Care</text>
-                        <text x="358" y="134" className="text-[7.5px] fill-gray-400 font-mono">$1,221.00</text>
-
-                        <rect x="345" y="148" width="6" height="24" rx="1.5" fill="#64748b" />
-                        <text x="358" y="156" className="text-[8px] font-sans fill-gray-900 font-medium">Uncategorized</text>
-                        <text x="358" y="165" className="text-[7.5px] fill-gray-400 font-mono">$10,034.00</text>
-
-                        {/* Surplus */}
-                        <rect x="345" y="215" width="6" height="20" rx="1.5" fill="#10b981" />
-                        <text x="358" y="224" className="text-[9px] font-sans fill-emerald-700 font-semibold">Surplus</text>
-                        <text x="358" y="233" className="text-[8px] fill-emerald-600 font-mono font-medium">$6,810.00</text>
+                        {/* Nodes + labels */}
+                        <rect x="8" y="60.9" width="10" height="82.3" rx="3" fill="#10b981" />
+                        <text x="26" y="101.1" className="text-[10px] font-sans fill-gray-900 font-medium">Salary</text>
+                        <text x="26" y="112.1" className="text-[8.5px] font-mono fill-gray-500">₹3,05,000</text>
+                        <rect x="8" y="157.3" width="10" height="22.9" rx="3" fill="#059669" />
+                        <text x="26" y="167.7" className="text-[10px] font-sans fill-gray-900 font-medium">Freelance</text>
+                        <text x="26" y="178.7" className="text-[8.5px] font-mono fill-gray-500">₹85,000</text>
+                        <rect x="8" y="194.2" width="10" height="4.9" rx="3" fill="#34d399" />
+                        <text x="26" y="195.6" className="text-[10px] font-sans fill-gray-900 font-medium">Dividends</text>
+                        <text x="26" y="206.6" className="text-[8.5px] font-mono fill-gray-500">₹18,000</text>
+                        <rect x="498" y="20.9" width="10" height="16.7" rx="3" fill="#dc2626" />
+                        <text x="490" y="28.3" textAnchor="end" className="text-[10px] font-sans fill-gray-900 font-medium">Housing</text>
+                        <text x="490" y="39.3" textAnchor="end" className="text-[8.5px] font-mono fill-gray-500">₹62,000</text>
+                        <rect x="498" y="55.7" width="10" height="7.6" rx="1.25" fill="#ea580c" />
+                        <text x="490" y="58.4" textAnchor="end" className="text-[10px] font-sans fill-gray-900 font-medium">Food &amp; Dining</text>
+                        <text x="490" y="69.4" textAnchor="end" className="text-[8.5px] font-mono fill-gray-500">₹28,000</text>
+                        <rect x="498" y="81.2" width="10" height="3.8" rx="1.25" fill="#2563eb" />
+                        <text x="490" y="82.1" textAnchor="end" className="text-[10px] font-sans fill-gray-900 font-medium">Transportation</text>
+                        <text x="490" y="93.1" textAnchor="end" className="text-[8.5px] font-mono fill-gray-500">₹14,000</text>
+                        <rect x="498" y="103" width="10" height="3" rx="1.25" fill="#7c3aed" />
+                        <text x="490" y="103.5" textAnchor="end" className="text-[10px] font-sans fill-gray-900 font-medium">Entertainment</text>
+                        <text x="490" y="114.5" textAnchor="end" className="text-[8.5px] font-mono fill-gray-500">₹11,000</text>
+                        <rect x="498" y="124" width="10" height="10.5" rx="3" fill="#db2777" />
+                        <text x="490" y="128.2" textAnchor="end" className="text-[10px] font-sans fill-gray-900 font-medium">Shopping / Travel / Care</text>
+                        <text x="490" y="139.2" textAnchor="end" className="text-[8.5px] font-mono fill-gray-500">₹39,000</text>
+                        <rect x="498" y="152.5" width="10" height="10.8" rx="3" fill="#64748b" />
+                        <text x="490" y="156.9" textAnchor="end" className="text-[10px] font-sans fill-gray-900 font-medium">Taxes (advance + TDS)</text>
+                        <text x="490" y="167.9" textAnchor="end" className="text-[8.5px] font-mono fill-gray-500">₹40,000</text>
+                        <rect x="498" y="181.3" width="10" height="57.8" rx="3" fill="#16a34a" />
+                        <text x="490" y="209.2" textAnchor="end" className="text-[10px] font-sans fill-emerald-700 font-semibold">Surplus</text>
+                        <text x="490" y="220.2" textAnchor="end" className="text-[8.5px] font-mono fill-emerald-600 font-medium">₹2,14,000</text>
+                        <rect x="250" y="74.9" width="12" height="110.2" rx="3" fill="#16a34a" />
+                        <text x="270" y="129" className="text-[10px] font-sans fill-gray-900 font-medium">Cash Flow</text>
+                        <text x="270" y="140" className="text-[8.5px] font-mono fill-gray-500">₹4,08,000</text>
                       </svg>
                     </div>
                   </div>
                 </div>
 
-                {/* 2. Assets Card ($811,067) */}
-                <div className="bg-white rounded-2xl border border-gray-200/80 p-5 shadow-xs">
+                {/* 2. Assets Card (₹1,33,30,000) */}
+                <div className="bg-white rounded-2xl border border-gray-200/80 p-4 sm:p-5 shadow-xs">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-baseline gap-2">
                       <h3 className="font-semibold text-gray-900 text-base">Assets</h3>
-                      <span className="text-gray-400 font-mono text-sm">· $811,067</span>
+                      <span className="text-gray-400 font-mono text-sm">· ₹1,33,30,000</span>
                     </div>
                   </div>
 
                   {/* Segmented bar */}
                   <div className="w-full h-2 rounded-full overflow-hidden flex gap-1 mb-3 bg-gray-100">
-                    <div className="h-full bg-purple-500 rounded-sm" style={{ width: '19%' }}></div>
-                    <div className="h-full bg-blue-500 rounded-sm" style={{ width: '34%' }}></div>
+                    <div className="h-full bg-purple-500 rounded-sm" style={{ width: '7%' }}></div>
+                    <div className="h-full bg-blue-500 rounded-sm" style={{ width: '31%' }}></div>
                     <div className="h-full bg-gray-700 rounded-sm" style={{ width: '1%' }}></div>
-                    <div className="h-full bg-cyan-400 rounded-sm" style={{ width: '43%' }}></div>
-                    <div className="h-full bg-pink-400 rounded-sm" style={{ width: '3%' }}></div>
+                    <div className="h-full bg-cyan-400 rounded-sm" style={{ width: '56%' }}></div>
+                    <div className="h-full bg-pink-400 rounded-sm" style={{ width: '5%' }}></div>
                   </div>
 
                   {/* Asset Legend Pills */}
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-gray-600 mb-4 font-medium">
                     <div className="flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded-full bg-purple-500"></span>
-                      <span>Cash <strong className="text-gray-900 font-mono">19%</strong></span>
+                      <span>Cash <strong className="text-gray-900 font-mono">7%</strong></span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-                      <span>Investments <strong className="text-gray-900 font-mono">34%</strong></span>
+                      <span>Investments <strong className="text-gray-900 font-mono">32%</strong></span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded-full bg-gray-700"></span>
@@ -285,11 +233,11 @@ export const DashboardPreview: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded-full bg-cyan-400"></span>
-                      <span>Properties <strong className="text-gray-900 font-mono">43%</strong></span>
+                      <span>Properties <strong className="text-gray-900 font-mono">56%</strong></span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded-full bg-pink-400"></span>
-                      <span>Vehicles <strong className="text-gray-900 font-mono">3%</strong></span>
+                      <span>Vehicles <strong className="text-gray-900 font-mono">5%</strong></span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
@@ -300,94 +248,94 @@ export const DashboardPreview: React.FC = () => {
                   {/* Assets Table */}
                   <div className="w-full text-xs">
                     <div className="grid grid-cols-12 text-[10px] uppercase font-mono text-gray-400 tracking-wider pb-2 border-b border-gray-100">
-                      <div className="col-span-6 font-medium">Name</div>
-                      <div className="col-span-3 font-medium">Weight</div>
-                      <div className="col-span-3 text-right font-medium">Value</div>
+                      <div className="col-span-7 sm:col-span-6 font-medium">Name</div>
+                      <div className="hidden sm:block col-span-3 font-medium">Weight</div>
+                      <div className="col-span-5 sm:col-span-3 text-right font-medium">Value</div>
                     </div>
 
                     <div className="divide-y divide-gray-50">
                       {/* Cash */}
                       <div className="grid grid-cols-12 py-2.5 items-center hover:bg-gray-50/60 transition-colors">
-                        <div className="col-span-6 flex items-center gap-1.5 font-medium text-gray-900">
+                        <div className="col-span-7 sm:col-span-6 flex items-center gap-1.5 font-medium text-gray-900 min-w-0">
                           <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
                           <span>Cash</span>
                         </div>
-                        <div className="col-span-3 flex items-center gap-2">
+                        <div className="hidden sm:flex col-span-3 items-center gap-2">
                           <div className="flex gap-0.5">
                             <span className="w-1 h-3 bg-purple-500 rounded-xs"></span>
                             <span className="w-1 h-3 bg-purple-400 rounded-xs"></span>
                             <span className="w-1 h-3 bg-purple-100 rounded-xs"></span>
                           </div>
-                          <span className="font-mono text-gray-700 font-medium">19.08%</span>
+                          <span className="font-mono text-gray-700 font-medium">7.13%</span>
                         </div>
-                        <div className="col-span-3 text-right font-mono font-semibold text-gray-900">$154,736.00</div>
+                        <div className="col-span-5 sm:col-span-3 text-right font-mono font-semibold text-gray-900">₹9,50,000.00</div>
                       </div>
 
                       {/* Investments */}
                       <div className="grid grid-cols-12 py-2.5 items-center hover:bg-gray-50/60 transition-colors">
-                        <div className="col-span-6 flex items-center gap-1.5 font-medium text-gray-900">
+                        <div className="col-span-7 sm:col-span-6 flex items-center gap-1.5 font-medium text-gray-900 min-w-0">
                           <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
                           <span>Investments</span>
                         </div>
-                        <div className="col-span-3 flex items-center gap-2">
+                        <div className="hidden sm:flex col-span-3 items-center gap-2">
                           <div className="flex gap-0.5">
                             <span className="w-1 h-3 bg-blue-500 rounded-xs"></span>
                             <span className="w-1 h-3 bg-blue-400 rounded-xs"></span>
                             <span className="w-1 h-3 bg-blue-300 rounded-xs"></span>
                           </div>
-                          <span className="font-mono text-gray-700 font-medium">34.32%</span>
+                          <span className="font-mono text-gray-700 font-medium">31.51%</span>
                         </div>
-                        <div className="col-span-3 text-right font-mono font-semibold text-gray-900">$278,330.76</div>
+                        <div className="col-span-5 sm:col-span-3 text-right font-mono font-semibold text-gray-900">₹42,00,000.00</div>
                       </div>
 
                       {/* Crypto */}
                       <div className="grid grid-cols-12 py-2.5 items-center hover:bg-gray-50/60 transition-colors">
-                        <div className="col-span-6 flex items-center gap-1.5 font-medium text-gray-900">
+                        <div className="col-span-7 sm:col-span-6 flex items-center gap-1.5 font-medium text-gray-900 min-w-0">
                           <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
                           <span>Crypto</span>
                         </div>
-                        <div className="col-span-3 flex items-center gap-2">
+                        <div className="hidden sm:flex col-span-3 items-center gap-2">
                           <div className="flex gap-0.5">
                             <span className="w-1 h-3 bg-gray-700 rounded-xs"></span>
                             <span className="w-1 h-3 bg-gray-200 rounded-xs"></span>
                           </div>
-                          <span className="font-mono text-gray-700 font-medium">0.43%</span>
+                          <span className="font-mono text-gray-700 font-medium">0.45%</span>
                         </div>
-                        <div className="col-span-3 text-right font-mono font-semibold text-gray-900">$3,500.00</div>
+                        <div className="col-span-5 sm:col-span-3 text-right font-mono font-semibold text-gray-900">₹60,000.00</div>
                       </div>
 
                       {/* Properties */}
                       <div className="grid grid-cols-12 py-2.5 items-center hover:bg-gray-50/60 transition-colors">
-                        <div className="col-span-6 flex items-center gap-1.5 font-medium text-gray-900">
+                        <div className="col-span-7 sm:col-span-6 flex items-center gap-1.5 font-medium text-gray-900 min-w-0">
                           <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
                           <span>Properties</span>
                         </div>
-                        <div className="col-span-3 flex items-center gap-2">
+                        <div className="hidden sm:flex col-span-3 items-center gap-2">
                           <div className="flex gap-0.5">
                             <span className="w-1 h-3 bg-cyan-400 rounded-xs"></span>
                             <span className="w-1 h-3 bg-cyan-300 rounded-xs"></span>
                             <span className="w-1 h-3 bg-cyan-200 rounded-xs"></span>
                             <span className="w-1 h-3 bg-cyan-100 rounded-xs"></span>
                           </div>
-                          <span className="font-mono text-gray-700 font-medium">43.15%</span>
+                          <span className="font-mono text-gray-700 font-medium">56.26%</span>
                         </div>
-                        <div className="col-span-3 text-right font-mono font-semibold text-gray-900">$350,000.00</div>
+                        <div className="col-span-5 sm:col-span-3 text-right font-mono font-semibold text-gray-900">₹75,00,000.00</div>
                       </div>
 
                       {/* Vehicles */}
                       <div className="grid grid-cols-12 py-2.5 items-center hover:bg-gray-50/60 transition-colors">
-                        <div className="col-span-6 flex items-center gap-1.5 font-medium text-gray-900">
+                        <div className="col-span-7 sm:col-span-6 flex items-center gap-1.5 font-medium text-gray-900 min-w-0">
                           <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
                           <span>Vehicles</span>
                         </div>
-                        <div className="col-span-3 flex items-center gap-2">
+                        <div className="hidden sm:flex col-span-3 items-center gap-2">
                           <div className="flex gap-0.5">
                             <span className="w-1 h-3 bg-pink-400 rounded-xs"></span>
                             <span className="w-1 h-3 bg-pink-200 rounded-xs"></span>
                           </div>
-                          <span className="font-mono text-gray-700 font-medium">2.77%</span>
+                          <span className="font-mono text-gray-700 font-medium">4.65%</span>
                         </div>
-                        <div className="col-span-3 text-right font-mono font-semibold text-gray-900">$22,500.00</div>
+                        <div className="col-span-5 sm:col-span-3 text-right font-mono font-semibold text-gray-900">₹6,20,000.00</div>
                       </div>
                     </div>
                   </div>
@@ -429,7 +377,7 @@ export const DashboardPreview: React.FC = () => {
                     {/* User Message 1 */}
                     <div className="flex justify-end">
                       <div className="text-xs text-gray-900 bg-gray-100 px-3.5 py-2 rounded-2xl rounded-tr-sm max-w-[85%] font-medium">
-                        Yeah? Well when can I afford that Ferrari?
+                        Yeah? Well when can I afford that car?
                       </div>
                     </div>
 
@@ -441,9 +389,9 @@ export const DashboardPreview: React.FC = () => {
                         </div>
                       </div>
                       <div className="text-xs text-gray-700 leading-relaxed bg-gray-50/70 p-3 rounded-2xl rounded-tl-sm border border-gray-100 space-y-2">
-                        <p>I can help estimate when you'd be able to afford a Ferrari! First, I'll need to know:</p>
+                        <p>I can help estimate when you'd be able to afford a car! First, I'll need to know:</p>
                         <ol className="list-decimal pl-4 space-y-1 text-gray-600">
-                          <li>The approximate price of the Ferrari you're considering (or I can use an average, like $250,000).</li>
+                          <li>The approximate price of the car you're considering (or I can use an average, like ₹12,00,000).</li>
                           <li>How much you currently have saved for this goal (if any).</li>
                           <li>How much you save each month toward major purchases.</li>
                         </ol>
@@ -494,20 +442,20 @@ export const DashboardPreview: React.FC = () => {
                       </div>
                       <div className="text-xs text-gray-700 leading-relaxed bg-gray-50/70 p-3 rounded-2xl rounded-tl-sm border border-gray-100 space-y-2">
                         <p>
-                          Your current net worth: <strong className="text-gray-900 font-mono">$560,196.76</strong>
+                          Your current net worth: <strong className="text-gray-900 font-mono">₹83,20,000.00</strong>
                         </p>
                         <div className="bg-white p-2 rounded-lg border border-gray-100 text-[11px] space-y-0.5 font-mono">
                           <div className="flex justify-between">
                             <span className="text-gray-500">Total assets:</span>
-                            <span className="font-semibold text-gray-900">$811,066.76</span>
+                            <span className="font-semibold text-gray-900">₹1,33,30,000.00</span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-gray-500">Total liabilities:</span>
-                            <span className="font-semibold text-gray-900">$250,870.00</span>
+                            <span className="font-semibold text-gray-900">₹50,10,000.00</span>
                           </div>
                         </div>
                         <p>
-                          Do you want to estimate when you can afford a Ferrari (about $250,000), or would you like to see how much you can save each year first?
+                          Do you want to estimate when you can afford a car (about ₹12,00,000), or would you like to see how much you can save each year first?
                         </p>
                       </div>
                     </div>

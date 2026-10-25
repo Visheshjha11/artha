@@ -13,9 +13,9 @@ export const AiSection: React.FC = () => {
   const [activePrompt, setActivePrompt] = useState(0);
 
   const prompts = [
-    "How is my investment portfolio doing compared to S&P 500?",
+    "How is my investment portfolio doing compared to Nifty 50?",
     "Detect any unusual spending spikes in the last 30 days",
-    "Simulate my net worth in 10 years if I save $1,500/mo"
+    "Simulate my net worth in 10 years if I invest ₹1,00,000/mo"
   ];
 
   return (
@@ -23,14 +23,14 @@ export const AiSection: React.FC = () => {
       
       {/* Dark Radial Gradient Container */}
       <div 
-        className="rounded-3xl md:rounded-[36px] overflow-hidden p-8 sm:p-14 md:p-20 text-center relative border border-white/10 shadow-2xl"
+        className="rounded-3xl md:rounded-[36px] overflow-hidden p-5 sm:p-10 md:p-14 lg:p-20 text-center relative border border-white/10 shadow-2xl"
         style={{
           background: 'radial-gradient(circle at 50% 30%, #262626 0%, #171717 70%, #0f0f10 100%)'
         }}
       >
         
         {/* Subtle background glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-72 h-72 sm:w-96 sm:h-96 bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none"></div>
 
         {/* Top Floating AI Emblem */}
         <div className="relative z-10 max-w-[800px] mx-auto flex flex-col items-center">
@@ -42,7 +42,7 @@ export const AiSection: React.FC = () => {
           </div>
 
           {/* Heading */}
-          <h2 className="text-4xl sm:text-5xl md:text-[3.75rem] font-medium tracking-[-0.05em] text-white leading-[1.08] mb-4">
+          <h2 className="text-[2rem] min-[400px]:text-4xl sm:text-5xl md:text-[3.75rem] font-medium tracking-[-0.05em] text-white leading-[1.08] mb-4">
             One more thing. <br />
             <span className="text-gray-400 font-normal">And yes, it's AI.</span>
           </h2>
@@ -61,7 +61,7 @@ export const AiSection: React.FC = () => {
           </div>
 
           {/* Subtitle with Question Chips */}
-          <div className="text-lg sm:text-xl md:text-2xl text-gray-400 font-normal leading-relaxed mb-8 flex flex-wrap items-center justify-center gap-2">
+          <div className="text-base sm:text-xl md:text-2xl text-gray-400 font-normal leading-relaxed mb-8 flex flex-wrap items-center justify-center gap-2">
             <span>Ask</span>
             <span className="text-white font-medium">anything</span>
             <span>like</span>
@@ -113,7 +113,7 @@ export const AiSection: React.FC = () => {
         </div>
 
         {/* Visual Cards Row in Dark Mode */}
-        <div className="mt-14 pt-8 border-t border-white/10 grid grid-cols-1 md:grid-cols-3 gap-5 text-left">
+        <div className="mt-10 sm:mt-14 pt-8 border-t border-white/10 grid grid-cols-1 lg:grid-cols-3 gap-5 text-left">
           
           {/* Card 1: Pattern Detection */}
           <div className="bg-[#1e1e22]/90 border border-white/10 rounded-2xl p-5 backdrop-blur-sm space-y-3">
@@ -143,11 +143,11 @@ export const AiSection: React.FC = () => {
             </div>
             <h4 className="text-white font-medium text-sm">Target FIRE Date: October 2038</h4>
             <p className="text-xs text-gray-400 leading-relaxed">
-              Based on your 43.15% real estate & savings trajectory, you are 3 years ahead of your goal.
+              Based on your 56% real estate & savings trajectory, you are 3 years ahead of your goal.
             </p>
             <div className="flex items-center justify-between pt-2 text-xs font-mono border-t border-white/5">
               <span className="text-gray-400">Projected Portfolio:</span>
-              <span className="text-emerald-400 font-semibold">$2,450,000</span>
+              <span className="text-emerald-400 font-semibold">₹6,25,00,000</span>
             </div>
           </div>
 
@@ -157,12 +157,12 @@ export const AiSection: React.FC = () => {
               <span className="font-mono uppercase text-[10px] tracking-wider text-purple-400">Rebalance Alert</span>
               <span>Actionable</span>
             </div>
-            <h4 className="text-white font-medium text-sm">Cash balance higher than usual</h4>
+            <h4 className="text-white font-medium text-sm">Idle cash above your emergency fund</h4>
             <p className="text-xs text-gray-400 leading-relaxed">
-              Holding $154k in cash (19%). Reallocating $45k into index funds saves $2,100 in inflation drag.
+              Holding ₹9.5L in savings (7%). Moving ₹4L into index funds could earn about ₹26,000 more per year.
             </p>
             <div className="flex gap-2 pt-1">
-              <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">+4.8% APY Boost</span>
+              <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">+6.5% p.a. Boost</span>
             </div>
           </div>
 

@@ -10,8 +10,22 @@
   --color-5: 90 100% 63%;
 }
 
+html {
+  scroll-behavior: smooth;
+  /* keep anchored sections clear of the sticky header */
+  scroll-padding-top: 5rem;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 * {
   font-family: var(--font-sans);
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
 }
 
 body {
@@ -92,4 +106,27 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
+}
+
+/* Touch devices: skip hover-only scaling that "sticks" after a tap */
+@media (hover: none) {
+  .rainbow-btn:hover {
+    transform: none;
+  }
+}
+
+/* Respect users who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .rainbow-btn,
+  .rainbow-btn::before {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -11,7 +11,7 @@ return (
 <div className="mb-4 flex justify-center">
 <AarthEmblem className="w-20 h-20" />
 </div>
-<h2 className="text-4xl sm:text-5xl md:text-[3.25rem] font-medium tracking-[-0.05em] text-gray-900 leading-[1.1] mb-3">
+<h2 className="text-[2rem] min-[400px]:text-4xl sm:text-5xl md:text-[3.25rem] font-medium tracking-[-0.05em] text-gray-900 leading-[1.1] mb-3">
       Turn your questions,
       <br />
       into financial certainty
@@ -33,7 +33,7 @@ return (
 
   {/* Main Footer Links */}
   <div className="max-w-[1140px] mx-auto w-full px-4 mb-16">
-    <div className="flex flex-col md:flex-row justify-between gap-12">
+    <div className="flex flex-col lg:flex-row justify-between gap-10 lg:gap-12">
       {/* Brand */}
       <div className="flex flex-col gap-3 max-w-[280px]">
         <a href="/" aria-label="Artha home">
@@ -46,7 +46,7 @@ return (
       </div>
 
       {/* Link columns */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 text-xs text-gray-500">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-8 lg:gap-8 text-xs text-gray-500">
         {/* Product */}
         <div className="flex flex-col gap-2.5">
           <h4 className="font-mono uppercase tracking-wider text-gray-900 font-semibold mb-1">
@@ -132,7 +132,7 @@ return (
   </div>
 
   {/* Copyright and Global Badge */}
-  <div className="max-w-[1140px] mx-auto w-full px-4 pb-8 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400 gap-3 border-t border-gray-200/60 pt-6">
+  <div className="max-w-[1140px] mx-auto w-full px-4 pb-[max(2rem,env(safe-area-inset-bottom))] flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400 gap-3 border-t border-gray-200/60 pt-6">
     <p>© {new Date().getFullYear()} Artha Finance. All rights reserved.</p>
 
     <p className="flex items-center gap-1.5">

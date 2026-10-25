@@ -40,14 +40,14 @@ export const SecuritySection: React.FC = () => {
       
       {/* Section Title matching Image 5 */}
       <div className="text-center mb-14">
-        <h2 className="text-4xl sm:text-5xl md:text-[3.5rem] font-medium tracking-[-0.05em] text-gray-900 leading-[1.08] mb-3">
+        <h2 className="text-[2rem] min-[400px]:text-4xl sm:text-5xl md:text-[3.5rem] font-medium tracking-[-0.05em] text-gray-900 leading-[1.08] mb-3">
           Uncompromising Security <br />
           <span className="text-gray-400 font-normal">Radical Transparency</span>
         </h2>
       </div>
 
       {/* Visual Showcase Banner matching Image 5 */}
-      <div className="bg-[#F8F9FA] rounded-2xl md:rounded-3xl border border-gray-200/80 shadow-xs p-6 sm:p-10 mb-16 relative overflow-hidden">
+      <div className="bg-[#F8F9FA] rounded-2xl md:rounded-3xl border border-gray-200/80 shadow-xs p-4 sm:p-8 lg:p-10 mb-12 md:mb-16 relative overflow-hidden">
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center min-h-[340px]">
           
@@ -100,16 +100,16 @@ export const SecuritySection: React.FC = () => {
 
           {/* Center Zone: GitHub Heatmap Grid + Center Aarth Badge */}
           <div className="lg:col-span-5 flex items-center justify-center relative">
-            <div className="relative p-3 bg-white/70 backdrop-blur-sm rounded-2xl border border-gray-200/80 shadow-2xs">
+            <div className="relative p-2 sm:p-3 w-full max-w-[342px] bg-white/70 backdrop-blur-sm rounded-2xl border border-gray-200/80 shadow-2xs">
               
               {/* Commit grid */}
-              <div className="grid grid-cols-18 gap-1.5">
+              <div className="grid grid-cols-18 gap-[3px] sm:gap-1.5 w-full">
                 {Array.from({ length: commitRows }).map((_, r) => (
                   <React.Fragment key={r}>
                     {Array.from({ length: commitCols }).map((_, c) => (
                       <div 
                         key={`${r}-${c}`}
-                        className="w-3 h-3 rounded-[2.5px] transition-colors"
+                        className="w-full aspect-square rounded-[2px] sm:rounded-[2.5px] transition-colors"
                         style={{ backgroundColor: getCellColor(r, c) }}
                       />
                     ))}
@@ -141,7 +141,7 @@ export const SecuritySection: React.FC = () => {
             <div className="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none select-none">
               <div className="grid grid-cols-4 gap-4 text-3xl font-black">
                 {Array.from({ length: 16 }).map((_, i) => (
-                  <span key={i}>$$$</span>
+                  <span key={i}>₹₹₹</span>
                 ))}
               </div>
             </div>
@@ -163,7 +163,7 @@ export const SecuritySection: React.FC = () => {
       </div>
 
       {/* 3 Security Pillars Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
         
         {/* Pillar 1 */}
         <div className="flex flex-col gap-4">

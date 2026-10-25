@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AarthWordmark, GithubIcon } from './AarthLogo';
 import { RainbowStrip } from './RainbowStrip';
 import { 
@@ -18,17 +18,74 @@ import {
 } from 'lucide-react';
 
 
+const productLinks = [
+  { href: '#tracking', label: 'Tracking', Icon: LineChart, tone: 'bg-emerald-50 border-emerald-100 text-emerald-600' },
+  { href: '#transactions', label: 'Transactions', Icon: CreditCard, tone: 'bg-blue-50 border-blue-100 text-blue-600' },
+  { href: '#budgeting', label: 'Budgeting', Icon: PieChart, tone: 'bg-purple-50 border-purple-100 text-purple-600' },
+  { href: '#assistant', label: 'Assistant', Icon: Sparkles, tone: 'bg-amber-50 border-amber-100 text-amber-600' },
+];
+
+const resourceLinks = [
+  { href: '#tools', label: 'Tools', Icon: Calculator },
+  { href: '#docs', label: 'Documentation', Icon: BookOpen },
+  { href: '#community', label: 'Community', Icon: Users },
+  { href: '#self-host', label: 'Self-Host', Icon: Server },
+];
+
 export const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [productDropdownOpen, setProductDropdownOpen] = useState(false);
   const [resourcesDropdownOpen, setResourcesDropdownOpen] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
+
+  // Close dropdowns on outside tap/click and on Escape (needed for touch tablets,
+  // where hover never fires).
+  useEffect(() => {
+    const onPointerDown = (e: PointerEvent) => {
+      if (headerRef.current && !headerRef.current.contains(e.target as Node)) {
+        setProductDropdownOpen(false);
+        setResourcesDropdownOpen(false);
+      }
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setProductDropdownOpen(false);
+        setResourcesDropdownOpen(false);
+        setMobileMenuOpen(false);
+      }
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, []);
+
+  // Close the mobile drawer when the viewport grows to the desktop layout.
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 768px)');
+    const onChange = (e: MediaQueryListEvent) => {
+      if (e.matches) setMobileMenuOpen(false);
+    };
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+
+  // Lock page scroll behind the open mobile drawer.
+  useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
 
   return (
-    <header className="sticky top-0 z-50 w-full flex flex-col">
+    <header ref={headerRef} className="sticky top-0 z-50 w-full flex flex-col">
       <RainbowStrip />
       
       <nav className="w-full bg-[#f9f9f9]/90 backdrop-blur-md border-b border-black/[0.06] transition-all">
-        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 h-16 gap-3 flex items-center justify-between">
           
           {/* Left: Brand Logo */}
           <div className="flex items-center gap-3">
@@ -46,13 +103,18 @@ export const Navbar: React.FC = () => {
               onMouseEnter={() => setProductDropdownOpen(true)}
               onMouseLeave={() => setProductDropdownOpen(false)}
             >
-              <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg hover:text-gray-950 hover:bg-black/[0.04] transition-colors">
+              <button
+                onClick={() => { setProductDropdownOpen(true); setResourcesDropdownOpen(false); }}
+                aria-haspopup="true"
+                aria-expanded={productDropdownOpen}
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg hover:text-gray-950 hover:bg-black/[0.04] transition-colors"
+              >
                 <span>Product</span>
                 <ChevronDown className={`w-3.5 h-3.5 text-gray-500 transition-transform duration-200 ${productDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {productDropdownOpen && (
-                <div className="absolute top-full left-0 mt-1 w-[380px] bg-white rounded-2xl shadow-xl border border-black/10 p-2.5 grid grid-cols-1 gap-1 animate-in fade-in slide-in-from-top-2 duration-150 z-50">
+                <div className="absolute top-full left-0 mt-1 w-[min(380px,calc(100vw-2rem))] bg-white rounded-2xl shadow-xl border border-black/10 p-2.5 grid grid-cols-1 gap-1 animate-in fade-in slide-in-from-top-2 duration-150 z-50">
                   <a href="#tracking" className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-gray-50 transition-colors group">
                     <div className="w-9 h-9 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 group-hover:scale-105 transition-transform">
                       <LineChart className="w-4 h-4" />
@@ -102,13 +164,18 @@ export const Navbar: React.FC = () => {
               onMouseEnter={() => setResourcesDropdownOpen(true)}
               onMouseLeave={() => setResourcesDropdownOpen(false)}
             >
-              <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg hover:text-gray-950 hover:bg-black/[0.04] transition-colors">
+              <button
+                onClick={() => { setResourcesDropdownOpen(true); setProductDropdownOpen(false); }}
+                aria-haspopup="true"
+                aria-expanded={resourcesDropdownOpen}
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg hover:text-gray-950 hover:bg-black/[0.04] transition-colors"
+              >
                 <span>Resources</span>
                 <ChevronDown className={`w-3.5 h-3.5 text-gray-500 transition-transform duration-200 ${resourcesDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {resourcesDropdownOpen && (
-                <div className="absolute top-full left-0 mt-1 w-[460px] bg-white rounded-2xl shadow-xl border border-black/10 p-3 grid grid-cols-2 gap-3 animate-in fade-in slide-in-from-top-2 duration-150 z-50">
+                <div className="absolute top-full left-0 mt-1 w-[min(460px,calc(100vw-2rem))] bg-white rounded-2xl shadow-xl border border-black/10 p-3 grid grid-cols-2 gap-3 animate-in fade-in slide-in-from-top-2 duration-150 z-50">
                   <div className="p-3 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex flex-col justify-between">
                     <div>
                       <div className="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center text-gray-800 mb-2">
@@ -169,8 +236,10 @@ export const Navbar: React.FC = () => {
           <div className="flex md:hidden items-center">
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-gray-700 hover:text-gray-950 focus:outline-none"
+              className="p-2.5 -mr-2 text-gray-700 hover:text-gray-950 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-lg"
               aria-label="Toggle Menu"
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -180,37 +249,66 @@ export const Navbar: React.FC = () => {
 
         {/* Mobile slide down drawer */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 bg-white/95 backdrop-blur-lg px-4 pt-4 pb-6 space-y-4">
-            <div className="flex flex-col space-y-2">
-              <a href="#tracking" onClick={() => setMobileMenuOpen(false)} className="text-base font-medium text-gray-900 py-2 border-b border-gray-100 flex items-center justify-between">
-                <span>Product</span>
-                <ChevronRight className="w-4 h-4 text-gray-400" />
-              </a>
-              <a href="#resources" onClick={() => setMobileMenuOpen(false)} className="text-base font-medium text-gray-900 py-2 border-b border-gray-100 flex items-center justify-between">
-                <span>Resources</span>
-                <ChevronRight className="w-4 h-4 text-gray-400" />
-              </a>
-              <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-base font-medium text-gray-900 py-2 border-b border-gray-100">
+          <div
+            id="mobile-menu"
+            className="md:hidden border-t border-gray-200 bg-white/95 backdrop-blur-lg px-4 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] space-y-5 max-h-[calc(100dvh-4.5rem)] overflow-y-auto overscroll-contain"
+          >
+            <div>
+              <p className="font-mono text-[10px] tracking-wider uppercase text-gray-400 font-bold mb-2">Product</p>
+              <div className="grid grid-cols-1 min-[420px]:grid-cols-2 gap-2">
+                {productLinks.map(({ href, label, Icon, tone }) => (
+                  <a
+                    key={href}
+                    href={href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 p-2.5 rounded-xl border border-gray-100 bg-white text-sm font-medium text-gray-900 active:bg-gray-50"
+                  >
+                    <span className={`w-9 h-9 shrink-0 rounded-lg border flex items-center justify-center ${tone}`}>
+                      <Icon className="w-4 h-4" />
+                    </span>
+                    {label}
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="font-mono text-[10px] tracking-wider uppercase text-gray-400 font-bold mb-2">Resources</p>
+              <div className="grid grid-cols-2 gap-2">
+                {resourceLinks.map(({ href, label, Icon }) => (
+                  <a
+                    key={href}
+                    href={href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-gray-50 text-sm font-medium text-gray-800 active:bg-gray-100"
+                  >
+                    <Icon className="w-4 h-4 text-gray-400 shrink-0" />
+                    <span className="truncate">{label}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-col">
+              <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-base font-medium text-gray-900 py-3 border-b border-gray-100">
                 Pricing
               </a>
-              <a href="https://github.com/Visheshjha11/artha" target="_blank" rel="noreferrer" className="text-base font-medium text-gray-900 py-2 border-b border-gray-100 flex items-center justify-between">
+              <a href="https://github.com/Visheshjha11/artha" target="_blank" rel="noreferrer" className="text-base font-medium text-gray-900 py-3 border-b border-gray-100 flex items-center justify-between">
                 <span>Contribute</span>
                 <ExternalLink className="w-4 h-4 text-gray-400" />
               </a>
-              <a href="#docs" onClick={() => setMobileMenuOpen(false)} className="text-base font-medium text-gray-900 py-2">
+              <a href="#docs" onClick={() => setMobileMenuOpen(false)} className="text-base font-medium text-gray-900 py-3">
                 Docs
               </a>
             </div>
 
-            <div className="pt-2 flex flex-col gap-2">
-              <a 
-                href="#try" 
-                onClick={() => setMobileMenuOpen(false)}
-                className="rainbow-btn w-full py-2.5 text-center text-sm font-medium text-white rounded-lg flex items-center justify-center gap-1.5 shadow-sm"
-              >
-                <span>🚀 Try it (sample data!)</span>
-              </a>
-            </div>
+            <a
+              href="#try"
+              onClick={() => setMobileMenuOpen(false)}
+              className="rainbow-btn w-full h-12 text-center text-sm font-medium text-white rounded-xl flex items-center justify-center gap-1.5 shadow-sm"
+            >
+              <span>🚀 Try it (sample data!)</span>
+            </a>
           </div>
         )}
       </nav>

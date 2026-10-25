@@ -9,22 +9,22 @@ export const HeroSection: React.FC = () => {
       {/* Background financial grid & chart lines (matching Image 1) */}
       <div className="absolute inset-0 pointer-events-none select-none overflow-hidden opacity-60">
         {/* Subtle grid lines & currency values on left edge */}
-        <div className="absolute left-6 md:left-16 top-1/4 bottom-1/4 flex flex-col justify-between text-[11px] font-mono text-gray-400/80">
+        <div className="hidden md:flex absolute left-16 top-1/4 bottom-1/4 flex-col justify-between text-[11px] font-mono text-gray-400/80">
           <div className="flex items-center gap-2">
             <span className="w-2 h-[1px] bg-gray-300"></span>
-            <span>$100k</span>
+            <span>₹1Cr</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-2 h-[1px] bg-gray-300"></span>
-            <span>$80k</span>
+            <span>₹80L</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-2 h-[1px] bg-gray-300"></span>
-            <span>$60k</span>
+            <span>₹60L</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-2 h-[1px] bg-gray-300"></span>
-            <span>$40k</span>
+            <span>₹40L</span>
           </div>
         </div>
 
@@ -62,15 +62,15 @@ export const HeroSection: React.FC = () => {
         </svg>
 
         {/* Floating financial price tag pill matching Image 1 */}
-        <div className="hidden lg:flex absolute right-[10%] top-[34%] bg-white/95 backdrop-blur-md border border-gray-200/90 rounded-xl px-3.5 py-2 shadow-[0_8px_20px_-4px_rgba(0,0,0,0.08)] flex-col gap-0.5 animate-in fade-in zoom-in-95 duration-500">
+        {/* <div className="hidden lg:flex absolute right-[10%] top-[34%] bg-white/95 backdrop-blur-md border border-gray-200/90 rounded-xl px-3.5 py-2 shadow-[0_8px_20px_-4px_rgba(0,0,0,0.08)] flex-col gap-0.5 animate-in fade-in zoom-in-95 duration-500">
           <div className="text-[11px] font-mono text-gray-400">27 Feb 2025</div>
           <div className="flex items-center gap-2">
-            <span className="font-mono text-sm font-semibold text-gray-800">$84,517.92</span>
+            <span className="font-mono text-sm font-semibold text-gray-800">₹83,19,764.52</span>
             <span className="text-[11px] font-mono font-medium text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">
-              +$256 (+0.4%)
+              +₹33,280 (+0.4%)
             </span>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Main Content Area */}
@@ -82,14 +82,14 @@ export const HeroSection: React.FC = () => {
         </div>
 
         {/* Primary Headline matching Image 1 */}
-        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.25rem] font-medium tracking-[-0.04em] text-gray-900 leading-[1.08] mb-5">
+        <h1 className="text-[2rem] min-[400px]:text-4xl sm:text-5xl md:text-6xl lg:text-[4.25rem] font-medium tracking-[-0.04em] text-gray-900 leading-[1.08] mb-5">
           The personal finance <br className="hidden sm:inline" />
           app for everyone <br />
           {/* <span className="text-gray-400 font-normal">(by everyone)</span> */}
         </h1>
 
         {/* Subtitle */}
-        <p className="text-lg sm:text-xl text-gray-500 max-w-[620px] font-normal leading-relaxed mb-8">
+        <p className="text-base sm:text-xl text-gray-500 max-w-[620px] font-normal leading-relaxed mb-8">
           Artha is an all-in-one personal finance platform. Track, optimize, 
           grow, and manage your money through every stage of life.
         </p>
@@ -104,7 +104,7 @@ export const HeroSection: React.FC = () => {
           </a>
 
           {/* Social Proof Badges */}
-          <div className="inline-flex items-center gap-2.5">
+          <div className="flex flex-wrap items-center justify-center gap-2.5">
             <a 
               href="https://github.com/Visheshjha11/artha" 
               target="_blank" 
