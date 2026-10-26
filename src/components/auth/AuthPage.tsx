@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { ArthaWordmark, GithubIcon } from '../landing/AarthLogo';
 import { RainbowStrip } from '../landing/RainbowStrip';
+import { api, errorText } from '../../lib/api';
 
 type Mode = 'signin' | 'signup';
 type Provider = 'google' | 'github';
@@ -67,12 +68,12 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [socialLoading, setSocialLoading] = useState<Provider | null>(null);
   const [toast, setToast] = useState<{ kind: 'success' | 'error'; text: string } | null>(null);
 
   const [showForgot, setShowForgot] = useState(false);
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotSent, setForgotSent] = useState(false);
+  const [forgotError, setForgotError] = useState<string | null>(null);
 
   // Track timers so nothing fires after the page unmounts.
   const timers = useRef<number[]>([]);
@@ -92,7 +93,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     return () => document.removeEventListener('keydown', onKey);
   }, [showForgot]);
 
-  const busy = loading || socialLoading !== null;
+  const busy = loading;
   const strength = getPasswordStrength(password);
   const isSignup = mode === 'signup';
 
@@ -103,13 +104,12 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
   const showToast = (kind: 'success' | 'error', text: string) => setToast({ kind, text });
 
-  // NOTE: there is no backend yet, so every flow below is simulated.
   const finish = (message: string, userEmail: string) => {
     showToast('success', message);
     later(() => onSuccess?.(userEmail), 900);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (busy) return;
     if (isSignup && !agreeTerms) {
@@ -118,26 +118,28 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     }
     setToast(null);
     setLoading(true);
-    later(() => {
-      setLoading(false);
+    try {
+      const { user } = isSignup
+        ? await api.signup({ name, email, password })
+        : await api.signin({ email, password, rememberMe });
       finish(
         isSignup ? 'Account created. Welcome to Artha!' : 'Welcome back! Signing you in…',
-        email || 'demo@artha.finance',
+        user.email,
       );
-    }, 800);
+    } catch (err) {
+      showToast('error', errorText(err));
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // Google and GitHub need OAuth credentials the backend does not have yet.
   const handleSocial = (provider: Provider) => {
     if (busy) return;
-    setToast(null);
-    setSocialLoading(provider);
-    later(() => {
-      setSocialLoading(null);
-      finish(
-        `Connected with ${provider === 'google' ? 'Google' : 'GitHub'}. Opening your dashboard…`,
-        `${provider}-user@artha.finance`,
-      );
-    }, 700);
+    showToast(
+      'error',
+      `${provider === 'google' ? 'Google' : 'GitHub'} sign-in is not available yet. Use email and password.`,
+    );
   };
 
   const handleDemo = () => {
@@ -152,16 +154,21 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     }, 600);
   };
 
-  const handleForgot = (e: React.FormEvent) => {
+  const handleForgot = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!forgotEmail || forgotSent) return;
+    setForgotError(null);
     setForgotSent(true);
-    later(() => {
+    try {
+      const { message } = await api.forgotPassword(forgotEmail);
       setShowForgot(false);
+      showToast('success', message);
+      later(() => setToast(null), 5000);
+    } catch (err) {
+      setForgotError(errorText(err));
+    } finally {
       setForgotSent(false);
-      showToast('success', `Recovery link sent to ${forgotEmail}`);
-      later(() => setToast(null), 4000);
-    }, 1200);
+    }
   };
 
   return (
@@ -243,9 +250,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   disabled={busy}
                   className="h-10 flex items-center justify-center gap-2 rounded-xl bg-white hover:bg-gray-50 active:scale-[0.98] border border-gray-200 hover:border-gray-300 text-xs font-medium text-gray-800 transition-all cursor-pointer disabled:opacity-60"
                 >
-                  {socialLoading === p ? (
-                    <span className="w-4 h-4 border-2 border-gray-200 border-t-gray-800 rounded-full animate-spin" />
-                  ) : p === 'google' ? (
+                  {p === 'google' ? (
                     <GoogleIcon />
                   ) : (
                     <GithubIcon className="w-4 h-4 text-gray-900" />
@@ -320,7 +325,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   ) : (
                     <button
                       type="button"
-                      onClick={() => { setForgotEmail(email); setShowForgot(true); }}
+                      onClick={() => { setForgotEmail(email); setForgotError(null); setShowForgot(true); }}
                       className="text-[11px] text-gray-500 hover:text-emerald-700 transition-colors cursor-pointer"
                     >
                       Forgot password?
@@ -536,6 +541,9 @@ export const AuthPage: React.FC<AuthPageProps> = ({
               </button>
             </div>
             <p className="text-gray-500">Enter your account email and we’ll send you a recovery link.</p>
+            {forgotError && (
+              <p role="alert" className="text-red-600 font-medium">{forgotError}</p>
+            )}
             <form onSubmit={handleForgot} className="space-y-3">
               <span className="relative flex items-center">
                 <Mail className="absolute left-3 w-4 h-4 text-gray-400 pointer-events-none" />

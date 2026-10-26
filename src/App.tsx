@@ -11,6 +11,7 @@ import { Footer } from './components/landing/Footer';
 import { AarthWordmark } from './components/landing/AarthLogo';
 import { RainbowStrip } from './components/landing/RainbowStrip';
 import { AuthPage } from './components/auth/AuthPage';
+import { api } from './lib/api';
 
 type View = 'landing' | 'signin' | 'signup' | 'demo';
 
@@ -50,7 +51,7 @@ const Landing: React.FC = () => (
 
 // Post-login screen. There is no real app yet, so this shows the sample
 // dashboard behind a slim account bar.
-const DemoWorkspace: React.FC<{ email: string; onSignOut: () => void }> = ({ email, onSignOut }) => (
+const DemoWorkspace: React.FC<{ email: string; onSignOut: () => void | Promise<void> }> = ({ email, onSignOut }) => (
   <div className="min-h-dvh w-full flex flex-col bg-[#F9F9F9] text-[#1a1a1a] selection:bg-emerald-100 selection:text-emerald-900">
     <header className="sticky top-0 z-50 w-full">
       <RainbowStrip />
@@ -84,6 +85,20 @@ const DemoWorkspace: React.FC<{ email: string; onSignOut: () => void }> = ({ ema
 export const App: React.FC = () => {
   const [view, setView] = useState<View>(() => viewFromHash('landing'));
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [checkingSession, setCheckingSession] = useState(true);
+
+  // Restore an existing session (cookie) so a refresh keeps you signed in.
+  useEffect(() => {
+    let cancelled = false;
+    api
+      .me()
+      .then(({ user }) => !cancelled && setUserEmail(user.email))
+      .catch(() => undefined)
+      .finally(() => !cancelled && setCheckingSession(false));
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     const onHashChange = () => setView((v) => viewFromHash(v));
@@ -102,11 +117,16 @@ export const App: React.FC = () => {
     window.history.pushState(null, '', window.location.pathname + window.location.search);
   };
 
-  if (view === 'demo' && userEmail) {
+  // Wait for the session check so a signed-in user never sees the login form flash.
+  if (checkingSession && (view === 'signin' || view === 'signup')) return null;
+
+  // Signed-in users go straight to the workspace instead of the login page.
+  if (userEmail && view !== 'landing') {
     return (
       <DemoWorkspace
         email={userEmail}
-        onSignOut={() => {
+        onSignOut={async () => {
+          await api.signout().catch(() => undefined);
           setUserEmail(null);
           goLanding();
         }}

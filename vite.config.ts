@@ -8,5 +8,10 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  server: {
+    // Forward API calls to the local auth backend (backend/, default port 4000).
+    proxy: {
+      '/api': 'http://127.0.0.1:4000',
+    },
+  },
 })
-
