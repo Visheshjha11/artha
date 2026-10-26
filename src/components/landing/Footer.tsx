@@ -7,9 +7,11 @@ export const Footer: React.FC = () => {
 return (
 <footer className="w-full pt-16 bg-[#F9F9F9] flex flex-col">
 {/* Top CTA Banner */}
-<div className="max-w-[720px] mx-auto text-center px-4 mb-24">
+<div data-reveal="text" className="max-w-[720px] mx-auto text-center px-4 mb-24">
 <div className="mb-4 flex justify-center">
+<div className="float-slow">
 <AarthEmblem className="w-20 h-20" />
+</div>
 </div>
 <h2 className="text-[2rem] min-[400px]:text-4xl sm:text-5xl md:text-[3.25rem] font-medium tracking-[-0.05em] text-gray-900 leading-[1.1] mb-3">
       Turn your questions,
@@ -32,7 +34,7 @@ return (
   </div>
 
   {/* Main Footer Links */}
-  <div className="max-w-[1140px] mx-auto w-full px-4 mb-16">
+  <div data-reveal="fade" className="max-w-[1140px] mx-auto w-full px-4 mb-16">
     <div className="flex flex-col lg:flex-row justify-between gap-10 lg:gap-12">
       {/* Brand */}
       <div className="flex flex-col gap-3 max-w-[280px]">

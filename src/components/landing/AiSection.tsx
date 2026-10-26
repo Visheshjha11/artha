@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { delay } from '../../lib/motion';
 import { 
   Sparkles, 
   ArrowUpRight, 
@@ -23,6 +24,7 @@ export const AiSection: React.FC = () => {
       
       {/* Dark Radial Gradient Container */}
       <div 
+        data-reveal="scale"
         className="rounded-3xl md:rounded-[36px] overflow-hidden p-5 sm:p-10 md:p-14 lg:p-20 text-center relative border border-white/10 shadow-2xl"
         style={{
           background: 'radial-gradient(circle at 50% 30%, #262626 0%, #171717 70%, #0f0f10 100%)'
@@ -30,19 +32,19 @@ export const AiSection: React.FC = () => {
       >
         
         {/* Subtle background glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-72 h-72 sm:w-96 sm:h-96 bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+        <div className="orb-a absolute top-0 left-1/2 -translate-x-1/2 w-72 h-72 sm:w-96 sm:h-96 bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none"></div>
 
         {/* Top Floating AI Emblem */}
         <div className="relative z-10 max-w-[800px] mx-auto flex flex-col items-center">
           
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-400 to-cyan-500 p-[2px] mb-6 shadow-[0_0_30px_rgba(34,197,94,0.3)]">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-400 to-cyan-500 p-[2px] mb-6 shadow-[0_0_30px_rgba(34,197,94,0.3)] glow-breathe">
             <div className="w-full h-full bg-[#1c1c1f] rounded-[14px] flex items-center justify-center text-emerald-400">
               <Bot className="w-7 h-7" />
             </div>
           </div>
 
           {/* Heading */}
-          <h2 className="text-[2rem] min-[400px]:text-4xl sm:text-5xl md:text-[3.75rem] font-medium tracking-[-0.05em] text-white leading-[1.08] mb-4">
+          <h2 data-reveal="text" style={delay(250)} className="text-[2rem] min-[400px]:text-4xl sm:text-5xl md:text-[3.75rem] font-medium tracking-[-0.05em] text-white leading-[1.08] mb-4">
             One more thing. <br />
             <span className="text-gray-400 font-normal">And yes, it's AI.</span>
           </h2>
@@ -116,7 +118,7 @@ export const AiSection: React.FC = () => {
         <div className="mt-10 sm:mt-14 pt-8 border-t border-white/10 grid grid-cols-1 lg:grid-cols-3 gap-5 text-left">
           
           {/* Card 1: Pattern Detection */}
-          <div className="bg-[#1e1e22]/90 border border-white/10 rounded-2xl p-5 backdrop-blur-sm space-y-3">
+          <div data-reveal style={delay(0)} className="bg-[#1e1e22]/90 border border-white/10 rounded-2xl p-5 backdrop-blur-sm space-y-3">
             <div className="flex items-center justify-between text-xs text-gray-400">
               <span className="font-mono uppercase text-[10px] tracking-wider text-emerald-400">Pattern Insight</span>
               <span>Today</span>
@@ -136,7 +138,7 @@ export const AiSection: React.FC = () => {
           </div>
 
           {/* Card 2: Safe to spend projection */}
-          <div className="bg-[#1e1e22]/90 border border-white/10 rounded-2xl p-5 backdrop-blur-sm space-y-3">
+          <div data-reveal style={delay(140)} className="bg-[#1e1e22]/90 border border-white/10 rounded-2xl p-5 backdrop-blur-sm space-y-3">
             <div className="flex items-center justify-between text-xs text-gray-400">
               <span className="font-mono uppercase text-[10px] tracking-wider text-cyan-400">Simulation</span>
               <span>Projection</span>
@@ -152,7 +154,7 @@ export const AiSection: React.FC = () => {
           </div>
 
           {/* Card 3: Asset allocation balance */}
-          <div className="bg-[#1e1e22]/90 border border-white/10 rounded-2xl p-5 backdrop-blur-sm space-y-3">
+          <div data-reveal style={delay(280)} className="bg-[#1e1e22]/90 border border-white/10 rounded-2xl p-5 backdrop-blur-sm space-y-3">
             <div className="flex items-center justify-between text-xs text-gray-400">
               <span className="font-mono uppercase text-[10px] tracking-wider text-purple-400">Rebalance Alert</span>
               <span>Actionable</span>

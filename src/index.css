@@ -115,14 +115,174 @@ body {
   }
 }
 
+/* ───────────────────────────────────────────────────────────────
+   Luxury motion system
+   Slow, soft-landing easing; champagne-gold accent; no bounce.
+   ─────────────────────────────────────────────────────────────── */
+:root {
+  --ease-lux: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-silk: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --gold: #c9a24b;
+}
+
+@keyframes lux-rise {
+  from { opacity: 0; transform: translate3d(0, 28px, 0); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes lux-rise-blur {
+  from { opacity: 0; transform: translate3d(0, 22px, 0); filter: blur(8px); }
+  to   { opacity: 1; transform: none; filter: blur(0); }
+}
+@keyframes lux-scale {
+  from { opacity: 0; transform: translate3d(0, 44px, 0) scale(0.965); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes lux-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes lux-word {
+  from { transform: translate3d(0, 110%, 0); }
+  to   { transform: none; }
+}
+@keyframes lux-draw {
+  from { stroke-dashoffset: 1; }
+  to   { stroke-dashoffset: 0; }
+}
+@keyframes lux-float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(0, -8px, 0); }
+}
+@keyframes lux-drift-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(60px, 36px, 0) scale(1.12); }
+}
+@keyframes lux-drift-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.05); }
+  50%      { transform: translate3d(-70px, -28px, 0) scale(0.95); }
+}
+@keyframes lux-sheen {
+  0%, 55% { background-position: 160% 0; }
+  100%    { background-position: -60% 0; }
+}
+@keyframes lux-grow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@keyframes lux-cell {
+  from { opacity: 0; transform: scale(0.4); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes lux-glow {
+  0%, 100% { box-shadow: 0 0 24px rgba(34, 197, 94, 0.25); }
+  50%      { box-shadow: 0 0 46px rgba(34, 197, 94, 0.5); }
+}
+
+/* Scroll reveals (elements with data-reveal; see src/lib/motion.ts).
+   Animations use "backwards" fill so hover transforms keep working afterwards. */
+.reveal-ready [data-reveal]:not([data-in]) { opacity: 0; }
+.reveal-ready [data-reveal][data-in] {
+  animation: lux-rise 1.1s var(--ease-lux) var(--reveal-delay, 0ms) backwards;
+}
+.reveal-ready [data-reveal='text'][data-in] {
+  animation-name: lux-rise-blur;
+  animation-duration: 1.25s;
+}
+.reveal-ready [data-reveal='scale'][data-in] {
+  animation-name: lux-scale;
+  animation-duration: 1.4s;
+}
+.reveal-ready [data-reveal='fade'][data-in] {
+  animation-name: lux-fade;
+  animation-duration: 1.6s;
+  animation-timing-function: var(--ease-silk);
+}
+/* "group" only supplies the trigger for descendants below */
+.reveal-ready [data-reveal='group']:not([data-in]) { opacity: 1; }
+.reveal-ready [data-reveal='group'][data-in] { animation: none; }
+
+/* Editorial copy: key words ink in, icon chips pop in, once the block is visible.
+   (Animations, not transitions, so hover effects on the same elements are untouched.) */
+@keyframes lux-ink { from { color: #8a95a5; } }
+@keyframes lux-pop {
+  from { opacity: 0; transform: scale(0.4) rotate(-20deg); }
+  to   { opacity: 1; transform: none; }
+}
+.reveal-ready [data-reveal]:not([data-in]) .ink { color: #8a95a5; }
+.reveal-ready [data-reveal][data-in] .ink {
+  animation: lux-ink 1.3s var(--ease-silk) calc(var(--reveal-delay, 0ms) + 350ms) backwards;
+}
+.reveal-ready [data-reveal]:not([data-in]) .pop { opacity: 0; }
+.reveal-ready [data-reveal][data-in] .pop {
+  animation: lux-pop 0.9s var(--ease-lux) calc(var(--reveal-delay, 0ms) + 550ms) backwards;
+}
+
+/* Allocation bars grow from the left, security heatmap ripples in */
+.bar-grow { transform-origin: left center; }
+.reveal-ready [data-reveal][data-in] .bar-grow {
+  animation: lux-grow 1.6s var(--ease-lux) calc(var(--reveal-delay, 0ms) + 600ms) backwards;
+}
+.reveal-ready [data-reveal]:not([data-in]) .wave-cell { opacity: 0; }
+.reveal-ready [data-reveal][data-in] .wave-cell {
+  animation: lux-cell 0.7s var(--ease-lux) calc(var(--reveal-delay, 0ms) + var(--i, 0) * 16ms) backwards;
+}
+
+/* Hero: choreographed entrance on first paint (pure CSS, no flash) */
+.hero-in { animation: lux-rise-blur 1.3s var(--ease-lux) var(--d, 0ms) backwards; }
+.hero-word { display: inline-block; animation: lux-word 1.1s var(--ease-lux) var(--d, 0ms) backwards; }
+.hero-fade { animation: lux-fade 1.8s var(--ease-silk) var(--d, 0ms) backwards; }
+.hero-chart-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  animation: lux-draw 3.2s var(--ease-silk) 0.5s backwards;
+}
+.hero-chart-fill { animation: lux-fade 2.4s var(--ease-silk) 2.2s backwards; }
+.float-slow { animation: lux-float 7s ease-in-out infinite; }
+.orb-a { animation: lux-drift-a 22s ease-in-out infinite; }
+.orb-b { animation: lux-drift-b 28s ease-in-out infinite; }
+.parallax {
+  transform: translate3d(calc(var(--px, 0) * var(--k, 10px)), calc(var(--py, 0) * var(--k, 10px)), 0);
+  transition: transform 0.9s var(--ease-lux);
+}
+.glow-breathe { animation: lux-glow 4.5s ease-in-out infinite; }
+
+/* Champagne sheen sweeping across primary buttons */
+.rainbow-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 38%, rgba(255, 244, 214, 0.32) 50%, transparent 62%);
+  background-size: 250% 100%;
+  background-position: 160% 0;
+  animation: lux-sheen 5.5s var(--ease-silk) infinite;
+}
+
+/* Navbar settles into a soft shadow once the page scrolls */
+.nav-scrolled { box-shadow: 0 10px 34px -18px rgba(0, 0, 0, 0.22); }
+
 /* Respect users who prefer less motion */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
   .rainbow-btn,
-  .rainbow-btn::before {
+  .rainbow-btn::before,
+  .rainbow-btn::after,
+  .hero-in,
+  .hero-word,
+  .hero-fade,
+  .hero-chart-line,
+  .hero-chart-fill,
+  .float-slow,
+  .orb-a,
+  .orb-b,
+  .glow-breathe {
     animation: none;
+  }
+  .parallax {
+    transform: none;
   }
   *,
   *::before,

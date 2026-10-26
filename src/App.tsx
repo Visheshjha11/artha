@@ -12,6 +12,7 @@ import { AarthWordmark } from './components/landing/AarthLogo';
 import { RainbowStrip } from './components/landing/RainbowStrip';
 import { AuthPage } from './components/auth/AuthPage';
 import { api } from './lib/api';
+import { useScrollReveal } from './lib/motion';
 
 type View = 'landing' | 'signin' | 'signup' | 'demo';
 
@@ -32,7 +33,9 @@ const viewFromHash = (current: View): View => {
   }
 };
 
-const Landing: React.FC = () => (
+const Landing: React.FC = () => {
+  useScrollReveal();
+  return (
   <div className="min-h-dvh w-full flex flex-col overflow-x-clip bg-[#F9F9F9] text-[#1a1a1a] selection:bg-emerald-100 selection:text-emerald-900">
     <Navbar />
 
@@ -47,11 +50,14 @@ const Landing: React.FC = () => (
 
     <Footer />
   </div>
-);
+  );
+};
 
 // Post-login screen. There is no real app yet, so this shows the sample
 // dashboard behind a slim account bar.
-const DemoWorkspace: React.FC<{ email: string; onSignOut: () => void | Promise<void> }> = ({ email, onSignOut }) => (
+const DemoWorkspace: React.FC<{ email: string; onSignOut: () => void | Promise<void> }> = ({ email, onSignOut }) => {
+  useScrollReveal();
+  return (
   <div className="min-h-dvh w-full flex flex-col bg-[#F9F9F9] text-[#1a1a1a] selection:bg-emerald-100 selection:text-emerald-900">
     <header className="sticky top-0 z-50 w-full">
       <RainbowStrip />
@@ -80,7 +86,8 @@ const DemoWorkspace: React.FC<{ email: string; onSignOut: () => void | Promise<v
       <DashboardPreview />
     </main>
   </div>
-);
+  );
+};
 
 export const App: React.FC = () => {
   const [view, setView] = useState<View>(() => viewFromHash('landing'));

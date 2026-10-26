@@ -36,7 +36,16 @@ export const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [productDropdownOpen, setProductDropdownOpen] = useState(false);
   const [resourcesDropdownOpen, setResourcesDropdownOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
+
+  // Soft shadow once the page has scrolled under the sticky bar.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   // Close dropdowns on outside tap/click and on Escape (needed for touch tablets,
   // where hover never fires).
@@ -84,7 +93,7 @@ export const Navbar: React.FC = () => {
     <header ref={headerRef} className="sticky top-0 z-50 w-full flex flex-col">
       <RainbowStrip />
       
-      <nav className="w-full bg-[#f9f9f9]/90 backdrop-blur-md border-b border-black/[0.06] transition-all">
+      <nav className={`hero-fade w-full bg-[#f9f9f9]/90 backdrop-blur-md border-b border-black/[0.06] transition-[box-shadow] duration-500 ${scrolled ? 'nav-scrolled' : ''}`}>
         <div className="max-w-[1280px] mx-auto px-4 sm:px-6 h-16 gap-3 flex items-center justify-between">
           
           {/* Left: Brand Logo */}

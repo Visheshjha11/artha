@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { delay } from '../../lib/motion';
 import { 
   Search, 
   SlidersHorizontal, 
@@ -26,7 +27,7 @@ export const TransactionsSection: React.FC = () => {
     <section id="transactions" className="w-full max-w-[1140px] mx-auto px-4 py-16 md:py-24">
       
       {/* Title matching Image 4 */}
-      <div className="text-center mb-12">
+      <div data-reveal="text" className="text-center mb-12">
         <h2 className="text-[2rem] min-[400px]:text-4xl sm:text-5xl md:text-[3.5rem] font-medium tracking-[-0.05em] text-gray-900 leading-[1.08] mb-3">
           Transactions <br />
           <span className="text-gray-400 font-normal">handled your way</span>
@@ -34,7 +35,7 @@ export const TransactionsSection: React.FC = () => {
       </div>
 
       {/* Floating Transactions Card (Image 4) */}
-      <div className="bg-white rounded-2xl md:rounded-3xl border border-black/10 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.08),0_0_0_1px_rgba(0,0,0,0.02)] p-4 sm:p-6 mb-16 overflow-hidden">
+      <div data-reveal="scale" className="bg-white rounded-2xl md:rounded-3xl border border-black/10 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.08),0_0_0_1px_rgba(0,0,0,0.02)] p-4 sm:p-6 mb-16 overflow-hidden">
         
         {/* Search & Filter Bar */}
         <div className="flex items-center gap-3 mb-6">
@@ -253,7 +254,7 @@ export const TransactionsSection: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
         
         {/* Card 1 */}
-        <div className="flex flex-col gap-3 group">
+        <div data-reveal style={delay(0)} className="flex flex-col gap-3 group">
           <div className="h-48 rounded-2xl bg-gradient-to-b from-gray-50 to-gray-100/60 border border-gray-200/70 p-4 flex items-center justify-center relative overflow-hidden group-hover:border-gray-300 transition-colors">
             <div className="w-full max-w-[220px] bg-white rounded-xl shadow-xs border border-gray-100 p-3 space-y-2">
               <div className="flex items-center gap-2">
@@ -271,7 +272,7 @@ export const TransactionsSection: React.FC = () => {
         </div>
 
         {/* Card 2 */}
-        <div className="flex flex-col gap-3 group">
+        <div data-reveal style={delay(130)} className="flex flex-col gap-3 group">
           <div className="h-48 rounded-2xl bg-gradient-to-b from-gray-50 to-gray-100/60 border border-gray-200/70 p-4 flex items-center justify-center relative overflow-hidden group-hover:border-gray-300 transition-colors">
             <div className="w-full max-w-[220px] bg-white rounded-xl shadow-xs border border-gray-100 p-3 space-y-2.5">
               <div className="flex items-center justify-between text-xs text-gray-500 pb-1 border-b border-gray-100">
@@ -291,7 +292,7 @@ export const TransactionsSection: React.FC = () => {
         </div>
 
         {/* Card 3 */}
-        <div className="flex flex-col gap-3 group">
+        <div data-reveal style={delay(260)} className="flex flex-col gap-3 group">
           <div className="h-48 rounded-2xl bg-gradient-to-b from-gray-50 to-gray-100/60 border border-gray-200/70 p-4 flex items-center justify-center relative overflow-hidden group-hover:border-gray-300 transition-colors">
             <div className="w-full max-w-[220px] bg-white rounded-xl shadow-xs border border-gray-100 p-3 space-y-2">
               <div className="flex items-center gap-2">

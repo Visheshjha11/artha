@@ -26,7 +26,7 @@ export const DashboardPreview: React.FC = () => {
     <section className="w-full max-w-[1240px] mx-auto px-2 sm:px-4 mb-20 -mt-6">
       
       {/* Floating Dashboard Card */}
-      <div className="bg-white rounded-2xl md:rounded-3xl border border-black/10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.12),0_0_0_1px_rgba(0,0,0,0.03)] overflow-hidden transition-all duration-300">
+      <div data-reveal="scale" className="bg-white rounded-2xl md:rounded-3xl border border-black/10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.12),0_0_0_1px_rgba(0,0,0,0.03)] overflow-hidden transition-all duration-300">
         
         {/* Layout container: Left sidebar + Main workspace */}
         <div className="flex flex-col md:flex-row md:min-h-[780px]">
@@ -210,11 +210,11 @@ export const DashboardPreview: React.FC = () => {
 
                   {/* Segmented bar */}
                   <div className="w-full h-2 rounded-full overflow-hidden flex gap-1 mb-3 bg-gray-100">
-                    <div className="h-full bg-purple-500 rounded-sm" style={{ width: '7%' }}></div>
-                    <div className="h-full bg-blue-500 rounded-sm" style={{ width: '31%' }}></div>
-                    <div className="h-full bg-gray-700 rounded-sm" style={{ width: '1%' }}></div>
-                    <div className="h-full bg-cyan-400 rounded-sm" style={{ width: '56%' }}></div>
-                    <div className="h-full bg-pink-400 rounded-sm" style={{ width: '5%' }}></div>
+                    <div className="h-full bg-purple-500 rounded-sm bar-grow" style={{ width: '7%' }}></div>
+                    <div className="h-full bg-blue-500 rounded-sm bar-grow" style={{ width: '31%' }}></div>
+                    <div className="h-full bg-gray-700 rounded-sm bar-grow" style={{ width: '1%' }}></div>
+                    <div className="h-full bg-cyan-400 rounded-sm bar-grow" style={{ width: '56%' }}></div>
+                    <div className="h-full bg-pink-400 rounded-sm bar-grow" style={{ width: '5%' }}></div>
                   </div>
 
                   {/* Asset Legend Pills */}

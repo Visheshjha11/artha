@@ -1,4 +1,5 @@
 import React from 'react';
+import { delay } from '../../lib/motion';
 import { 
   ShieldCheck, 
   Key, 
@@ -39,7 +40,7 @@ export const SecuritySection: React.FC = () => {
     <section id="security" className="w-full max-w-[1140px] mx-auto px-4 py-16 md:py-24">
       
       {/* Section Title matching Image 5 */}
-      <div className="text-center mb-14">
+      <div data-reveal="text" className="text-center mb-14">
         <h2 className="text-[2rem] min-[400px]:text-4xl sm:text-5xl md:text-[3.5rem] font-medium tracking-[-0.05em] text-gray-900 leading-[1.08] mb-3">
           Uncompromising Security <br />
           <span className="text-gray-400 font-normal">Radical Transparency</span>
@@ -47,7 +48,7 @@ export const SecuritySection: React.FC = () => {
       </div>
 
       {/* Visual Showcase Banner matching Image 5 */}
-      <div className="bg-[#F8F9FA] rounded-2xl md:rounded-3xl border border-gray-200/80 shadow-xs p-4 sm:p-8 lg:p-10 mb-12 md:mb-16 relative overflow-hidden">
+      <div data-reveal="scale" className="bg-[#F8F9FA] rounded-2xl md:rounded-3xl border border-gray-200/80 shadow-xs p-4 sm:p-8 lg:p-10 mb-12 md:mb-16 relative overflow-hidden">
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center min-h-[340px]">
           
@@ -70,27 +71,27 @@ export const SecuritySection: React.FC = () => {
             {/* Floating Security Pills */}
             <div className="relative z-10 flex flex-col items-start gap-2.5">
               
-              <div className="bg-white/95 backdrop-blur-sm border border-gray-200/90 rounded-xl px-3.5 py-1.5 shadow-xs flex items-center gap-2.5 text-xs font-medium text-gray-800 hover:scale-102 transition-transform">
+              <div data-reveal style={delay(350)} className="bg-white/95 backdrop-blur-sm border border-gray-200/90 rounded-xl px-3.5 py-1.5 shadow-xs flex items-center gap-2.5 text-xs font-medium text-gray-800 hover:scale-102 transition-transform">
                 <Ban className="w-3.5 h-3.5 text-gray-400" />
                 <span>No internal access</span>
               </div>
 
-              <div className="bg-white/95 backdrop-blur-sm border border-gray-200/90 rounded-xl px-3.5 py-1.5 shadow-xs flex items-center gap-2.5 text-xs font-medium text-gray-800 hover:scale-102 transition-transform ml-2">
+              <div data-reveal style={delay(460)} className="bg-white/95 backdrop-blur-sm border border-gray-200/90 rounded-xl px-3.5 py-1.5 shadow-xs flex items-center gap-2.5 text-xs font-medium text-gray-800 hover:scale-102 transition-transform ml-2">
                 <Key className="w-3.5 h-3.5 text-gray-400" />
                 <span>Encrypted data</span>
               </div>
 
-              <div className="bg-white/95 backdrop-blur-sm border border-gray-200/90 rounded-xl px-3.5 py-1.5 shadow-xs flex items-center gap-2.5 text-xs font-medium text-gray-800 hover:scale-102 transition-transform">
+              <div data-reveal style={delay(570)} className="bg-white/95 backdrop-blur-sm border border-gray-200/90 rounded-xl px-3.5 py-1.5 shadow-xs flex items-center gap-2.5 text-xs font-medium text-gray-800 hover:scale-102 transition-transform">
                 <Landmark className="w-3.5 h-3.5 text-gray-400" />
                 <span>Bank-grade security</span>
               </div>
 
-              <div className="bg-white/95 backdrop-blur-sm border border-gray-200/90 rounded-xl px-3.5 py-1.5 shadow-xs flex items-center gap-2.5 text-xs font-medium text-gray-800 hover:scale-102 transition-transform ml-1">
+              <div data-reveal style={delay(680)} className="bg-white/95 backdrop-blur-sm border border-gray-200/90 rounded-xl px-3.5 py-1.5 shadow-xs flex items-center gap-2.5 text-xs font-medium text-gray-800 hover:scale-102 transition-transform ml-1">
                 <Database className="w-3.5 h-3.5 text-gray-400" />
                 <span>Credentials not stored</span>
               </div>
 
-              <div className="bg-white/95 backdrop-blur-sm border border-gray-200/90 rounded-xl px-3.5 py-1.5 shadow-xs flex items-center gap-2.5 text-xs font-medium text-gray-800 hover:scale-102 transition-transform">
+              <div data-reveal style={delay(790)} className="bg-white/95 backdrop-blur-sm border border-gray-200/90 rounded-xl px-3.5 py-1.5 shadow-xs flex items-center gap-2.5 text-xs font-medium text-gray-800 hover:scale-102 transition-transform">
                 <ShieldCheck className="w-3.5 h-3.5 text-gray-400" />
                 <span>No ads or upsells</span>
               </div>
@@ -103,14 +104,14 @@ export const SecuritySection: React.FC = () => {
             <div className="relative p-2 sm:p-3 w-full max-w-[342px] bg-white/70 backdrop-blur-sm rounded-2xl border border-gray-200/80 shadow-2xs">
               
               {/* Commit grid */}
-              <div className="grid grid-cols-18 gap-[3px] sm:gap-1.5 w-full">
+              <div data-reveal="group" style={delay(300)} className="grid grid-cols-18 gap-[3px] sm:gap-1.5 w-full">
                 {Array.from({ length: commitRows }).map((_, r) => (
                   <React.Fragment key={r}>
                     {Array.from({ length: commitCols }).map((_, c) => (
                       <div 
                         key={`${r}-${c}`}
-                        className="w-full aspect-square rounded-[2px] sm:rounded-[2.5px] transition-colors"
-                        style={{ backgroundColor: getCellColor(r, c) }}
+                        className="wave-cell w-full aspect-square rounded-[2px] sm:rounded-[2.5px] transition-colors"
+                        style={{ backgroundColor: getCellColor(r, c), ['--i' as string]: r + c }}
                       />
                     ))}
                   </React.Fragment>
@@ -166,7 +167,7 @@ export const SecuritySection: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
         
         {/* Pillar 1 */}
-        <div className="flex flex-col gap-4">
+        <div data-reveal style={delay(0)} className="flex flex-col gap-4">
           <div className="w-10 h-10 rounded-full border-2 border-gray-200 bg-white flex items-center justify-center text-gray-800 shadow-2xs">
             <Lock className="w-4 h-4" />
           </div>
@@ -185,7 +186,7 @@ export const SecuritySection: React.FC = () => {
         </div>
 
         {/* Pillar 2 */}
-        <div className="flex flex-col gap-4">
+        <div data-reveal style={delay(140)} className="flex flex-col gap-4">
           <div className="w-10 h-10 rounded-full border-2 border-gray-200 bg-white flex items-center justify-center text-gray-800 shadow-2xs">
             <Code2 className="w-4 h-4" />
           </div>
@@ -205,7 +206,7 @@ export const SecuritySection: React.FC = () => {
 
 
         {/* Pillar 3 */}
-        <div className="flex flex-col gap-4">
+        <div data-reveal style={delay(280)} className="flex flex-col gap-4">
           <div className="w-10 h-10 rounded-full border-2 border-gray-200 bg-white flex items-center justify-center text-gray-800 shadow-2xs">
             <HeartHandshake className="w-4 h-4" />
           </div>
