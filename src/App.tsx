@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { LogOut } from 'lucide-react';
 import { Navbar } from './components/landing/Navbar';
 import { HeroSection } from './components/landing/HeroSection';
 import { DashboardPreview } from './components/landing/DashboardPreview';
@@ -8,9 +7,8 @@ import { InteractiveFeaturesText } from './components/landing/InteractiveFeature
 import { SecuritySection } from './components/landing/SecuritySection';
 import { AiSection } from './components/landing/AiSection';
 import { Footer } from './components/landing/Footer';
-import { AarthWordmark } from './components/landing/AarthLogo';
-import { RainbowStrip } from './components/landing/RainbowStrip';
 import { AuthPage } from './components/auth/AuthPage';
+import { Workspace } from './components/app/Workspace';
 import { api } from './lib/api';
 import { useScrollReveal } from './lib/motion';
 
@@ -49,42 +47,6 @@ const Landing: React.FC = () => {
     </main>
 
     <Footer />
-  </div>
-  );
-};
-
-// Post-login screen. There is no real app yet, so this shows the sample
-// dashboard behind a slim account bar.
-const DemoWorkspace: React.FC<{ email: string; onSignOut: () => void | Promise<void> }> = ({ email, onSignOut }) => {
-  useScrollReveal();
-  return (
-  <div className="min-h-dvh w-full flex flex-col bg-[#F9F9F9] text-[#1a1a1a] selection:bg-emerald-100 selection:text-emerald-900">
-    <header className="sticky top-0 z-50 w-full">
-      <RainbowStrip />
-      <div className="bg-[#f9f9f9]/90 backdrop-blur-md border-b border-black/[0.06]">
-        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
-          <AarthWordmark />
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="hidden sm:block truncate max-w-[220px] font-mono text-[11px] text-gray-500">{email}</span>
-            <button
-              type="button"
-              onClick={onSignOut}
-              className="inline-flex items-center gap-1.5 h-8 px-3 text-xs font-medium text-gray-700 hover:text-gray-950 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg shadow-xs transition-colors cursor-pointer"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              Sign out
-            </button>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <main className="flex-1 w-full pt-10">
-      <p className="text-center font-mono text-[10px] tracking-wider uppercase text-gray-400 font-bold mb-8">
-        Sample data · nothing here is saved
-      </p>
-      <DashboardPreview />
-    </main>
   </div>
   );
 };
@@ -130,7 +92,7 @@ export const App: React.FC = () => {
   // Signed-in users go straight to the workspace instead of the login page.
   if (userEmail && view !== 'landing') {
     return (
-      <DemoWorkspace
+      <Workspace
         email={userEmail}
         onSignOut={async () => {
           await api.signout().catch(() => undefined);
