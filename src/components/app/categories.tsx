@@ -61,3 +61,10 @@ export const CategoryTile: React.FC<{ category: CategoryKey; className?: string 
     </div>
   );
 };
+
+/** Hex colours matching each category's `dot`, for SVG charts. */
+export const CATEGORY_HEX: Record<CategoryKey, string> = {
+  income: '#10b981', interest: '#14b8a6', housing: '#ef4444', food: '#f97316', transport: '#3b82f6',
+  entertainment: '#8b5cf6', shopping: '#ec4899', utilities: '#f59e0b', health: '#f43f5e',
+  subscriptions: '#6366f1', insurance: '#64748b',
+};

@@ -14,6 +14,8 @@ import { useScrollReveal } from './lib/motion';
 
 type View = 'landing' | 'signin' | 'signup' | 'demo';
 
+const DEMO_EMAIL = 'demo.user@artha.finance';
+
 // Every "Try it" button on the landing page links to #try, so a tiny hash
 // router is all that's needed. Other hashes (#tracking, #terms, …) are
 // in-page anchors and must not change the current view.
@@ -23,6 +25,8 @@ const viewFromHash = (current: View): View => {
       return 'signin';
     case '#signup':
       return 'signup';
+    case '#demo':
+      return 'demo';
     case '':
     case '#':
       return 'landing';
@@ -55,6 +59,10 @@ export const App: React.FC = () => {
   const [view, setView] = useState<View>(() => viewFromHash('landing'));
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [checkingSession, setCheckingSession] = useState(true);
+
+  // "#demo" skips the login screen and opens the workspace with the same demo
+  // account the "Try demo" button on the login page uses (sample data only).
+  const activeEmail = userEmail ?? (view === 'demo' ? DEMO_EMAIL : null);
 
   // Restore an existing session (cookie) so a refresh keeps you signed in.
   useEffect(() => {
@@ -90,10 +98,10 @@ export const App: React.FC = () => {
   if (checkingSession && (view === 'signin' || view === 'signup')) return null;
 
   // Signed-in users go straight to the workspace instead of the login page.
-  if (userEmail && view !== 'landing') {
+  if (activeEmail && view !== 'landing') {
     return (
       <Workspace
-        email={userEmail}
+        email={activeEmail}
         onSignOut={async () => {
           await api.signout().catch(() => undefined);
           setUserEmail(null);
@@ -110,7 +118,7 @@ export const App: React.FC = () => {
         initialMode={view}
         onBack={goLanding}
         onSuccess={(email) => {
-          setUserEmail(email ?? 'demo@artha.finance');
+          setUserEmail(email ?? DEMO_EMAIL);
           setView('demo');
           window.history.pushState(null, '', window.location.pathname + window.location.search);
         }}

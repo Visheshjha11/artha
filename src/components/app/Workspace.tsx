@@ -4,6 +4,8 @@ import { AppShell, type Page } from './AppShell';
 import { HomePage } from './HomePage';
 import { TransactionsPage } from './TransactionsPage';
 import { BillsPage } from './BillsPage';
+import { ReportsPage } from './ReportsPage';
+import { PlanPage } from './PlanPage';
 import { TransactionModal } from './TransactionModal';
 import { BillModal } from './BillModal';
 
@@ -28,6 +30,8 @@ const WorkspaceInner: React.FC<{ email: string; onSignOut: () => void | Promise<
       {page === 'home' && <HomePage name={name} onNavigate={setPage} onAdd={() => setDialog('transaction')} />}
       {page === 'transactions' && <TransactionsPage onAdd={() => setDialog('transaction')} />}
       {page === 'bills' && <BillsPage onAdd={() => setDialog('bill')} />}
+      {page === 'reports' && <ReportsPage />}
+      {page === 'plan' && <PlanPage />}
 
       {dialog === 'transaction' && <TransactionModal onClose={() => setDialog(null)} onSave={addTransaction} />}
       {dialog === 'bill' && <BillModal onClose={() => setDialog(null)} onSave={addBill} />}

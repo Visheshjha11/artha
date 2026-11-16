@@ -205,3 +205,60 @@ export const dueLabel = (b: Bill) => {
   if (d === 1) return 'Due tomorrow';
   return `Due in ${d} days`;
 };
+
+/* ------------------------- budgets & months ------------------------- */
+
+/** Monthly budget (INR) per expense category. */
+export const SEED_BUDGETS: Partial<Record<CategoryKey, number>> = {
+  housing: 65000,
+  food: 14000,
+  transport: 9000,
+  entertainment: 4000,
+  shopping: 12000,
+  utilities: 7000,
+  health: 4000,
+  subscriptions: 3500,
+  insurance: 3000,
+};
+
+/** "YYYY-MM" of a date. */
+export const monthOf = (iso: string) => iso.slice(0, 7);
+
+export const currentMonth = () => monthOf(toISO(startOfToday()));
+
+export const shiftMonth = (ym: string, delta: number) => {
+  const [y, m] = ym.split('-').map(Number);
+  const d = new Date(y, m - 1 + delta, 1);
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}`;
+};
+
+export const monthLabel = (ym: string, short = false) => {
+  const [y, m] = ym.split('-').map(Number);
+  return new Date(y, m - 1, 1).toLocaleDateString('en-IN', short ? { month: 'short' } : { month: 'long', year: 'numeric' });
+};
+
+export const isExpense = (t: Transaction) => t.amount < 0 && t.category !== 'income' && t.category !== 'interest';
+
+/** Total spent per category, for transactions whose month is in `months`. */
+export const spendByCategory = (list: Transaction[], months: string[]) => {
+  const out: Partial<Record<CategoryKey, number>> = {};
+  for (const t of list) {
+    if (isExpense(t) && months.includes(monthOf(t.date))) out[t.category] = (out[t.category] ?? 0) - t.amount;
+  }
+  return out;
+};
+
+export interface Goal {
+  id: string;
+  name: string;
+  target: number;
+  saved: number;
+  /** Target date, YYYY-MM-DD. */
+  deadline: string;
+}
+
+export const SEED_GOALS: Goal[] = [
+  { id: 'g1', name: 'Emergency fund', target: 600000, saved: 410000, deadline: dayOffset(150) },
+  { id: 'g2', name: 'Goa trip', target: 120000, saved: 45000, deadline: dayOffset(210) },
+  { id: 'g3', name: 'New laptop', target: 150000, saved: 140000, deadline: dayOffset(60) },
+];

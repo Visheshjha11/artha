@@ -1,14 +1,16 @@
 import React from 'react';
-import { CalendarClock, CreditCard, House, LogOut, type LucideIcon } from 'lucide-react';
+import { CalendarClock, ChartColumn, CreditCard, House, LogOut, Target, type LucideIcon } from 'lucide-react';
 import { AarthIcon, AarthWordmark } from '../landing/AarthLogo';
 import { RainbowStrip } from '../landing/RainbowStrip';
 
-export type Page = 'home' | 'transactions' | 'bills';
+export type Page = 'home' | 'transactions' | 'bills' | 'reports' | 'plan';
 
 const NAV: { id: Page; label: string; icon: LucideIcon }[] = [
   { id: 'home', label: 'Home', icon: House },
   { id: 'transactions', label: 'Transactions', icon: CreditCard },
   { id: 'bills', label: 'Bills', icon: CalendarClock },
+  { id: 'reports', label: 'Reports', icon: ChartColumn },
+  { id: 'plan', label: 'Plan', icon: Target },
 ];
 
 export const AppShell: React.FC<{
@@ -97,7 +99,7 @@ export const AppShell: React.FC<{
       {/* Mobile bottom nav */}
       <nav
         aria-label="Main"
-        className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-black/[0.08] grid grid-cols-3 pb-[env(safe-area-inset-bottom,0px)]"
+        className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-black/[0.08] grid grid-cols-5 pb-[env(safe-area-inset-bottom,0px)]"
       >
         {NAV.map(({ id, label, icon: Icon }) => {
           const active = id === page;
