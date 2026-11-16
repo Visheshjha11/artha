@@ -70,7 +70,7 @@ export const DashboardPreview: React.FC = () => {
                 <HelpCircle className="w-5 h-5" />
               </button>
               <div className="w-8 h-8 rounded-full bg-gray-200 border border-gray-300 flex items-center justify-center text-xs font-semibold text-gray-700">
-                JB
+                V
               </div>
             </div>
           </aside>
@@ -88,7 +88,7 @@ export const DashboardPreview: React.FC = () => {
                   <span className="text-gray-700 font-medium">Dashboard</span>
                 </div>
                 <h2 className="text-2xl sm:text-[26px] font-semibold tracking-tight text-gray-900">
-                  Welcome back, Jack
+                  Welcome back, V
                 </h2>
                 <p className="text-xs text-gray-400 font-normal">
                   Here's what's happening with your finances
