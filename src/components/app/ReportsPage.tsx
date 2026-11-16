@@ -46,7 +46,7 @@ const Delta: React.FC<{ now: number; before: number; goodWhenUp: boolean }> = ({
   const pct = ((now - before) / before) * 100;
   const good = pct === 0 || pct > 0 === goodWhenUp;
   return (
-    <span className={`text-xs font-medium ${good ? 'text-emerald-700' : 'text-red-600'}`}>
+    <span className={`text-xs font-medium ${good ? 'text-[#078C52]' : 'text-[#F13636]'}`}>
       {pct > 0 ? '+' : ''}{pct.toFixed(0)}% vs previous period
     </span>
   );
@@ -71,7 +71,7 @@ export const ReportsPage: React.FC = () => {
     const ratio = used / limit;
     return { k, limit, used, status: ratio > 1 ? 'over' : ratio >= 0.8 ? 'warning' : 'good' } as const;
   });
-  const pill = { good: 'bg-emerald-50 text-emerald-700', warning: 'bg-amber-50 text-amber-700', over: 'bg-red-50 text-red-700' };
+  const pill = { good: 'bg-[#12B76A]/10 text-[#078C52]', warning: 'bg-[#F79009]/10 text-[#DC6803]', over: 'bg-[#F13636]/10 text-[#F13636]' };
 
   const exportCsv = () => {
     const rows = [['Date', 'Name', 'Category', 'Account', 'Amount'], ...now.rows.map((t) => [t.date, t.name, CATEGORIES[t.category].label, t.account, String(t.amount)])];
@@ -116,9 +116,9 @@ export const ReportsPage: React.FC = () => {
 
       <div className="grid sm:grid-cols-3 gap-3 mb-4">
         {[
-          { l: 'Income', v: now.income, b: before.income, up: true, tone: 'text-emerald-700' },
+          { l: 'Income', v: now.income, b: before.income, up: true, tone: 'text-[#078C52]' },
           { l: 'Expenses', v: now.expenses, b: before.expenses, up: false, tone: 'text-gray-900' },
-          { l: 'Net savings', v: now.net, b: before.net, up: true, tone: now.net >= 0 ? 'text-emerald-700' : 'text-red-600' },
+          { l: 'Net savings', v: now.net, b: before.net, up: true, tone: now.net >= 0 ? 'text-[#078C52]' : 'text-[#F13636]' },
         ].map((s) => (
           <Card key={s.l} className="p-4 sm:p-5">
             <p className={`${label} mb-2`}>{s.l}</p>
@@ -174,7 +174,7 @@ export const ReportsPage: React.FC = () => {
                     <td className="py-2.5"><span className="inline-flex items-center gap-2 text-gray-900"><i className="w-2 h-2 rounded-full" style={{ background: CATEGORY_HEX[k] }} />{CATEGORIES[k].label}</span></td>
                     <td className="py-2.5 text-right tabular-nums">{formatINR(v)}</td>
                     <td className="py-2.5 text-right tabular-nums text-gray-500">{now.expenses ? ((v / now.expenses) * 100).toFixed(0) : 0}%</td>
-                    <td className={`py-2.5 text-right tabular-nums ${diff === null ? 'text-gray-400' : diff > 0 ? 'text-red-600' : 'text-emerald-700'}`}>
+                    <td className={`py-2.5 text-right tabular-nums ${diff === null ? 'text-gray-400' : diff > 0 ? 'text-[#F13636]' : 'text-[#078C52]'}`}>
                       {diff === null ? '—' : `${diff > 0 ? '+' : ''}${diff.toFixed(0)}%`}
                     </td>
                   </tr>

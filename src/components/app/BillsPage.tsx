@@ -17,10 +17,10 @@ import {
 type Filter = 'all' | 'unpaid' | 'paid';
 
 const SECTIONS: { id: BillBucket; title: string; tone: string }[] = [
-  { id: 'overdue', title: 'Overdue', tone: 'text-red-600' },
-  { id: 'week', title: 'Due in the next 7 days', tone: 'text-amber-600' },
+  { id: 'overdue', title: 'Overdue', tone: 'text-[#F13636]' },
+  { id: 'week', title: 'Due in the next 7 days', tone: 'text-[#DC6803]' },
   { id: 'later', title: 'Later', tone: 'text-gray-500' },
-  { id: 'paid', title: 'Paid', tone: 'text-emerald-600' },
+  { id: 'paid', title: 'Paid', tone: 'text-[#078C52]' },
 ];
 
 const Summary: React.FC<{
@@ -43,7 +43,7 @@ const Summary: React.FC<{
 const BillRow: React.FC<{ bill: Bill; onPay: () => void; onDelete: () => void }> = ({ bill, onPay, onDelete }) => {
   const bucket = billBucket(bill);
   const dueColor =
-    bucket === 'overdue' ? 'text-red-600 font-medium' : bucket === 'paid' ? 'text-emerald-600' : bucket === 'week' ? 'text-amber-600' : 'text-gray-400';
+    bucket === 'overdue' ? 'text-[#F13636] font-medium' : bucket === 'paid' ? 'text-[#078C52]' : bucket === 'week' ? 'text-[#DC6803]' : 'text-gray-400';
 
   return (
     <li className="flex items-center gap-2.5 sm:gap-3 px-2 sm:px-4 py-3 rounded-xl hover:bg-gray-50/80 transition-colors group">
@@ -63,7 +63,7 @@ const BillRow: React.FC<{ bill: Bill; onPay: () => void; onDelete: () => void }>
           {bill.frequency}
         </span>
         {bill.autopay && (
-          <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">Auto-pay</span>
+          <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#12B76A]/10 text-[#078C52] border border-emerald-200/60">Auto-pay</span>
         )}
       </div>
 
@@ -75,12 +75,12 @@ const BillRow: React.FC<{ bill: Bill; onPay: () => void; onDelete: () => void }>
             type="button"
             onClick={onPay}
             aria-label={`Mark ${bill.name} as paid`}
-            className="inline-flex items-center gap-1 p-1.5 sm:px-2.5 rounded-lg text-xs font-medium whitespace-nowrap bg-white border border-gray-200 text-gray-700 hover:bg-emerald-50 hover:border-emerald-200 hover:text-emerald-700 shadow-2xs transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1 p-1.5 sm:px-2.5 rounded-lg text-xs font-medium whitespace-nowrap bg-white border border-gray-200 text-gray-700 hover:bg-[#12B76A]/10 hover:border-emerald-200 hover:text-[#078C52] shadow-2xs transition-colors cursor-pointer"
           >
             <Check className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Mark paid</span>
           </button>
         ) : (
-          <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600">
+          <span className="inline-flex items-center gap-1 text-xs font-medium text-[#078C52]">
             <CheckCircle2 className="w-4 h-4" /> <span className="hidden sm:inline">Paid</span>
           </span>
         )}
@@ -88,7 +88,7 @@ const BillRow: React.FC<{ bill: Bill; onPay: () => void; onDelete: () => void }>
           type="button"
           onClick={onDelete}
           aria-label={`Delete ${bill.name}`}
-          className="p-1.5 text-gray-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100"
+          className="p-1.5 text-gray-300 hover:text-[#F13636] hover:bg-[#F13636]/10 rounded-lg transition-colors cursor-pointer sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100"
         >
           <Trash2 className="w-3.5 h-3.5" />
         </button>
@@ -153,15 +153,15 @@ export const BillsPage: React.FC<{ onAdd: () => void }> = ({ onAdd }) => {
           label="Overdue"
           value={formatINR(stats.overdue.amount)}
           hint={`${stats.overdue.n} bill${stats.overdue.n === 1 ? '' : 's'}`}
-          icon={<AlertCircle className="w-4 h-4 text-red-600" />}
-          iconBg="bg-red-50"
+          icon={<AlertCircle className="w-4 h-4 text-[#F13636]" />}
+          iconBg="bg-[#F13636]/10"
         />
         <Summary
           label="Due in 7 days"
           value={formatINR(stats.week.amount)}
           hint={`${stats.week.n} bill${stats.week.n === 1 ? '' : 's'}`}
-          icon={<CalendarClock className="w-4 h-4 text-amber-600" />}
-          iconBg="bg-amber-50"
+          icon={<CalendarClock className="w-4 h-4 text-[#DC6803]" />}
+          iconBg="bg-[#F79009]/10"
         />
         <Summary
           label="Total unpaid"
@@ -174,8 +174,8 @@ export const BillsPage: React.FC<{ onAdd: () => void }> = ({ onAdd }) => {
           label="Paid"
           value={formatINR(stats.paid.amount)}
           hint={`${stats.paid.n} bill${stats.paid.n === 1 ? '' : 's'} settled`}
-          icon={<CheckCircle2 className="w-4 h-4 text-emerald-600" />}
-          iconBg="bg-emerald-50"
+          icon={<CheckCircle2 className="w-4 h-4 text-[#078C52]" />}
+          iconBg="bg-[#12B76A]/10"
         />
       </div>
 

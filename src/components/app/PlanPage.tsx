@@ -28,7 +28,7 @@ const Donut: React.FC<{ spent: number; budget: number; parts: { key: CategoryKey
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className="font-mono text-[10px] tracking-wider uppercase text-gray-400 font-bold">{over ? 'Over by' : 'Left'}</span>
-        <span className={`text-2xl font-semibold tabular-nums ${over ? 'text-red-600' : 'text-gray-900'}`}>
+        <span className={`text-2xl font-semibold tabular-nums ${over ? 'text-[#F13636]' : 'text-gray-900'}`}>
           {formatINR(Math.abs(budget - spent))}
         </span>
         <span className="text-xs text-gray-500">of {formatINR(budget)}</span>
@@ -94,19 +94,19 @@ export const PlanPage: React.FC = () => {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-baseline justify-between gap-2">
                     <span className="text-sm font-medium text-gray-900 truncate">{CATEGORIES[k].label}</span>
-                    <span className={`text-xs tabular-nums ${over ? 'text-red-600 font-semibold' : used >= limit * 0.8 && limit > 0 ? 'text-amber-600 font-medium' : 'text-gray-500'}`}>
+                    <span className={`text-xs tabular-nums ${over ? 'text-[#F13636] font-semibold' : used >= limit * 0.8 && limit > 0 ? 'text-[#DC6803] font-medium' : 'text-gray-500'}`}>
                       {formatINR(used)} / {formatINR(limit)}
                     </span>
                   </div>
                   <div className="mt-2 h-1.5 rounded-full bg-gray-100 overflow-hidden">
-                    <div className={`h-full rounded-full ${over ? 'bg-red-500' : CATEGORIES[k].dot}`} style={{ width: `${pct}%` }} />
+                    <div className={`h-full rounded-full ${over ? 'bg-[#F13636]' : CATEGORIES[k].dot}`} style={{ width: `${pct}%` }} />
                   </div>
                 </div>
                 {editing === k ? (
                   <form className="flex items-center gap-1" onSubmit={(e) => { e.preventDefault(); save(k); }}>
                     <input autoFocus type="number" min="0" value={draft} onChange={(e) => setDraft(e.target.value)}
                       className="w-24 h-8 px-2 text-sm border border-gray-300 rounded-lg" aria-label={`${CATEGORIES[k].label} budget`} />
-                    <button type="submit" aria-label="Save budget" className="p-1.5 text-emerald-700 hover:bg-emerald-50 rounded-lg cursor-pointer"><Check className="w-4 h-4" /></button>
+                    <button type="submit" aria-label="Save budget" className="p-1.5 text-[#078C52] hover:bg-[#12B76A]/10 rounded-lg cursor-pointer"><Check className="w-4 h-4" /></button>
                   </form>
                 ) : (
                   <button type="button" aria-label={`Edit ${CATEGORIES[k].label} budget`}

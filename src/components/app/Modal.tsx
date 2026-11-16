@@ -31,7 +31,7 @@ export const Modal: React.FC<{
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-2xl border border-black/10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.25)] max-h-[92dvh] overflow-y-auto"
+        className="w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-xl border border-black/10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.25)] max-h-[92dvh] overflow-y-auto"
       >
         <div className="flex items-center justify-between px-5 pt-5 pb-3">
           <h2 className="text-base font-semibold text-gray-900">{title}</h2>
@@ -61,12 +61,12 @@ export const Field: React.FC<{ label: string; htmlFor: string; error?: string; c
       {label}
     </label>
     {children}
-    {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
+    {error && <p className="text-xs text-[#F13636] mt-1">{error}</p>}
   </div>
 );
 
 export const inputClass =
-  'w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/60 focus:border-emerald-500 transition-all';
+  'w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0B0B0B]/10 focus:border-gray-400 transition-all';
 
 export const primaryBtn =
   'inline-flex items-center justify-center gap-1.5 bg-[#18181b] hover:bg-black text-white px-3.5 py-2 rounded-lg text-xs font-medium shadow-sm transition-colors cursor-pointer disabled:opacity-50';

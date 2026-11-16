@@ -122,7 +122,7 @@ export const HomePage: React.FC<{ name: string; onNavigate: (p: Page) => void; o
           <p className="font-mono text-3xl font-semibold tracking-tight text-gray-900 mt-2">
             {formatINR(ASSETS - LIABILITIES)}
           </p>
-          <p className="text-xs text-emerald-600 font-medium mt-1 flex items-center gap-1">
+          <p className="text-xs text-[#078C52] font-medium mt-1 flex items-center gap-1">
             <TrendingUp className="w-3.5 h-3.5" /> +12.1% over 10 months
           </p>
           <div className="mt-3">
@@ -142,7 +142,7 @@ export const HomePage: React.FC<{ name: string; onNavigate: (p: Page) => void; o
 
         {/* Stats */}
         <div className="lg:col-span-7 grid grid-cols-1 min-[480px]:grid-cols-3 gap-5">
-          <Stat label="Income · 30D" value={formatINR(m.income)} icon={<ArrowDownLeft className="w-4 h-4 text-emerald-500" />} tone="text-emerald-600" />
+          <Stat label="Income · 30D" value={formatINR(m.income)} icon={<ArrowDownLeft className="w-4 h-4 text-emerald-500" />} tone="text-[#078C52]" />
           <Stat label="Spent · 30D" value={formatINR(m.expenses)} icon={<ArrowUpRight className="w-4 h-4 text-red-500" />} />
           <Stat
             label="Savings rate"
@@ -162,7 +162,7 @@ export const HomePage: React.FC<{ name: string; onNavigate: (p: Page) => void; o
                 <div
                   key={d.date}
                   title={`${formatDay(d.date)}: ${formatINR(d.spend)}`}
-                  className={`flex-1 rounded-sm ${d.spend > 0 ? 'bg-emerald-500/80 hover:bg-emerald-600' : 'bg-gray-100'} transition-colors`}
+                  className={`flex-1 rounded-sm ${d.spend > 0 ? 'bg-[#12B76A]/80 hover:bg-emerald-600' : 'bg-gray-100'} transition-colors`}
                   style={{ height: `${Math.max(4, (d.spend / maxDaily) * 100)}%` }}
                 />
               ))}
@@ -217,7 +217,7 @@ export const HomePage: React.FC<{ name: string; onNavigate: (p: Page) => void; o
                   <CategoryTile category={b.category} />
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-gray-900 truncate">{b.name}</p>
-                    <p className={`text-xs ${billBucket(b) === 'overdue' ? 'text-red-600 font-medium' : 'text-gray-400'}`}>
+                    <p className={`text-xs ${billBucket(b) === 'overdue' ? 'text-[#F13636] font-medium' : 'text-gray-400'}`}>
                       {dueLabel(b)}
                     </p>
                   </div>
@@ -246,7 +246,7 @@ export const HomePage: React.FC<{ name: string; onNavigate: (p: Page) => void; o
                     {formatDay(t.date)} · {CATEGORIES[t.category].label}
                   </p>
                 </div>
-                <span className={`font-mono text-sm font-semibold ${t.amount > 0 ? 'text-emerald-600' : 'text-gray-900'}`}>
+                <span className={`font-mono text-sm font-semibold ${t.amount > 0 ? 'text-[#078C52]' : 'text-gray-900'}`}>
                   {formatSignedINR(t.amount)}
                 </span>
               </li>

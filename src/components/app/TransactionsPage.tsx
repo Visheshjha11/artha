@@ -171,7 +171,7 @@ export const TransactionsPage: React.FC<{ onAdd: () => void }> = ({ onAdd }) => 
           </div>
           <div>
             <p className="font-mono text-[10px] uppercase tracking-wider text-gray-400">Income</p>
-            <p className="font-mono text-sm font-semibold text-emerald-600">{formatINR(income)}</p>
+            <p className="font-mono text-sm font-semibold text-[#078C52]">{formatINR(income)}</p>
           </div>
           <div>
             <p className="font-mono text-[10px] uppercase tracking-wider text-gray-400">Expenses</p>
@@ -181,7 +181,7 @@ export const TransactionsPage: React.FC<{ onAdd: () => void }> = ({ onAdd }) => 
 
         {/* Bulk action bar */}
         {selected.size > 0 && (
-          <div className="flex items-center justify-between gap-3 mb-3 px-4 py-2 bg-emerald-50/70 border border-emerald-100 rounded-xl text-xs">
+          <div className="flex items-center justify-between gap-3 mb-3 px-4 py-2 bg-[#12B76A]/10/70 border border-emerald-100 rounded-xl text-xs">
             <span className="font-medium text-emerald-800">{selected.size} selected</span>
             <div className="flex gap-2">
               <button type="button" onClick={() => setSelected(new Set())} className={secondaryBtn}>Deselect</button>
@@ -208,7 +208,7 @@ export const TransactionsPage: React.FC<{ onAdd: () => void }> = ({ onAdd }) => 
             <div className="grid grid-cols-12 px-3 sm:px-4 py-2 text-[11px] font-mono font-medium text-gray-400 uppercase tracking-wider border-b border-gray-100">
               <div className="col-span-1 flex items-center">
                 <button type="button" onClick={toggleAll} aria-label={allSelected ? 'Deselect all' : 'Select all'} className="cursor-pointer">
-                  {allSelected ? <CheckSquare className="w-4 h-4 text-emerald-600" /> : <Square className="w-4 h-4 text-gray-300" />}
+                  {allSelected ? <CheckSquare className="w-4 h-4 text-[#078C52]" /> : <Square className="w-4 h-4 text-gray-300" />}
                 </button>
               </div>
               <div className="col-span-7 sm:col-span-5">Transaction</div>
@@ -233,7 +233,7 @@ export const TransactionsPage: React.FC<{ onAdd: () => void }> = ({ onAdd }) => 
                       <div
                         key={t.id}
                         onClick={() => toggle(t.id)}
-                        className={`grid grid-cols-12 px-3 sm:px-4 py-3 items-center text-sm rounded-xl transition-colors cursor-pointer hover:bg-gray-50/80 ${isSel ? 'bg-emerald-50/40' : ''}`}
+                        className={`grid grid-cols-12 px-3 sm:px-4 py-3 items-center text-sm rounded-xl transition-colors cursor-pointer hover:bg-gray-50/80 ${isSel ? 'bg-[#12B76A]/10/40' : ''}`}
                       >
                         <div className="col-span-1 flex items-center">
                           <button
@@ -246,7 +246,7 @@ export const TransactionsPage: React.FC<{ onAdd: () => void }> = ({ onAdd }) => 
                             }}
                             className="cursor-pointer"
                           >
-                            {isSel ? <CheckSquare className="w-4 h-4 text-emerald-600" /> : <Square className="w-4 h-4 text-gray-300" />}
+                            {isSel ? <CheckSquare className="w-4 h-4 text-[#078C52]" /> : <Square className="w-4 h-4 text-gray-300" />}
                           </button>
                         </div>
                         <div className="col-span-7 sm:col-span-5 flex items-center gap-3 min-w-0">
@@ -260,7 +260,7 @@ export const TransactionsPage: React.FC<{ onAdd: () => void }> = ({ onAdd }) => 
                           <CategoryChip category={t.category} />
                         </div>
                         <div className="hidden md:block col-span-2 text-xs text-gray-600 font-mono truncate pr-2">{t.account}</div>
-                        <div className={`col-span-4 sm:col-span-3 md:col-span-2 text-right font-mono font-semibold ${t.amount > 0 ? 'text-emerald-600' : 'text-gray-900'}`}>
+                        <div className={`col-span-4 sm:col-span-3 md:col-span-2 text-right font-mono font-semibold ${t.amount > 0 ? 'text-[#078C52]' : 'text-gray-900'}`}>
                           {formatSignedINR(t.amount)}
                         </div>
                       </div>

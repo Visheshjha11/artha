@@ -55,13 +55,13 @@ export const GoalsCard: React.FC = () => {
                 <span className="text-xs tabular-nums text-gray-500">{formatINR(g.saved)} / {formatINR(g.target)}</span>
               </div>
               <div className="mt-2 h-1.5 rounded-full bg-gray-100 overflow-hidden">
-                <div className={`h-full rounded-full ${done ? 'bg-emerald-500' : 'bg-gray-800'}`} style={{ width: `${pct}%` }} />
+                <div className={`h-full rounded-full ${done ? 'bg-[#12B76A]' : 'bg-gray-800'}`} style={{ width: `${pct}%` }} />
               </div>
               <div className="mt-1.5 flex items-center justify-between text-xs text-gray-500">
                 <span>{done ? 'Goal reached' : `By ${formatDay(g.deadline, { day: 'numeric', month: 'short', year: 'numeric' })}${left < 0 ? ' · past due' : ''}`}</span>
                 {!done && (
                   <button type="button" onClick={() => contributeGoal(g.id, 5000)}
-                    className="font-medium text-emerald-700 hover:underline cursor-pointer">+ ₹5,000</button>
+                    className="font-medium text-[#078C52] hover:underline cursor-pointer">+ ₹5,000</button>
                 )}
               </div>
             </li>

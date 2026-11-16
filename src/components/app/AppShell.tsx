@@ -1,17 +1,31 @@
-import React from 'react';
-import { CalendarClock, ChartColumn, CreditCard, House, LogOut, Target, type LucideIcon } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import {
+  ChartColumnIncreasing,
+  ChartPie,
+  CircleHelp,
+  Compass,
+  CreditCard,
+  LogOut,
+  ReceiptText,
+  type LucideIcon,
+} from 'lucide-react';
 import { AarthIcon, AarthWordmark } from '../landing/AarthLogo';
 import { RainbowStrip } from '../landing/RainbowStrip';
+import { useAppData } from './AppData';
+import { EXPENSE_CATEGORY_KEYS } from './categories';
+import { billBucket, currentMonth, spendByCategory } from '../../lib/finance';
 
 export type Page = 'home' | 'transactions' | 'bills' | 'reports' | 'plan';
 
 const NAV: { id: Page; label: string; icon: LucideIcon }[] = [
-  { id: 'home', label: 'Home', icon: House },
+  { id: 'home', label: 'Home', icon: ChartPie },
   { id: 'transactions', label: 'Transactions', icon: CreditCard },
-  { id: 'bills', label: 'Bills', icon: CalendarClock },
-  { id: 'reports', label: 'Reports', icon: ChartColumn },
-  { id: 'plan', label: 'Plan', icon: Target },
+  { id: 'bills', label: 'Bills', icon: ReceiptText },
+  { id: 'reports', label: 'Reports', icon: ChartColumnIncreasing },
+  { id: 'plan', label: 'Plan', icon: Compass },
 ];
+
+const RING = 'shadow-[0_1px_2px_rgba(11,11,11,0.06),0_0_0_1px_rgba(11,11,11,0.05)]';
 
 export const AppShell: React.FC<{
   page: Page;
@@ -21,58 +35,87 @@ export const AppShell: React.FC<{
   children: React.ReactNode;
 }> = ({ page, onNavigate, email, onSignOut, children }) => {
   const initials = email.slice(0, 2).toUpperCase();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const { bills, transactions, budgets } = useAppData();
+
+  // Purple dot = something needs attention: an overdue bill, or a category over budget this month.
+  const attention = useMemo<Partial<Record<Page, boolean>>>(() => {
+    const spend = spendByCategory(transactions, [currentMonth()]);
+    return {
+      bills: bills.some((b) => billBucket(b) === 'overdue'),
+      plan: EXPENSE_CATEGORY_KEYS.some((k) => (budgets[k] ?? 0) > 0 && (spend[k] ?? 0) > (budgets[k] ?? 0)),
+    };
+  }, [bills, transactions, budgets]);
 
   return (
-    <div className="min-h-dvh w-full flex bg-[#F9F9F9] text-[#1a1a1a] selection:bg-emerald-100 selection:text-emerald-900">
-      {/* Desktop sidebar */}
-      <aside className="hidden md:flex sticky top-0 h-dvh w-60 shrink-0 flex-col justify-between border-r border-black/[0.06] bg-[#FAFAFA] px-3 py-5">
-        <div>
-          <div className="px-2 mb-6 flex items-center gap-2.5">
-            <AarthIcon className="w-8 h-8" />
-            <AarthWordmark />
-          </div>
-          <nav aria-label="Main" className="flex flex-col gap-1">
+    <div className="min-h-dvh w-full flex bg-[#F7F7F7] text-[#1a1a1a] selection:bg-emerald-100 selection:text-emerald-900">
+      {/* Desktop icon rail */}
+      <aside className="hidden md:flex sticky top-0 h-dvh w-[88px] shrink-0 flex-col items-center justify-between border-r border-[#E7E7E7] bg-[#F7F7F7] py-5">
+        <div className="w-full flex flex-col items-center">
+          <AarthIcon className="w-9 h-9 mb-6" />
+          <nav aria-label="Main" className="w-full flex flex-col gap-2">
             {NAV.map(({ id, label, icon: Icon }) => {
               const active = id === page;
               return (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => onNavigate(id)}
-                  aria-current={active ? 'page' : undefined}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors cursor-pointer ${
-                    active
-                      ? 'bg-white text-gray-900 border border-gray-200/90 shadow-xs'
-                      : 'text-gray-500 hover:text-gray-900 hover:bg-white/70 border border-transparent'
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  {label}
-                </button>
+                <div key={id} className="relative flex justify-center">
+                  {active && <span aria-hidden className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-[#0B0B0B]" />}
+                  <button
+                    type="button"
+                    onClick={() => onNavigate(id)}
+                    aria-current={active ? 'page' : undefined}
+                    className={`flex w-[76px] flex-col items-center gap-1 rounded-xl px-1 py-2 text-[11px] font-medium transition-colors cursor-pointer ${
+                      active ? `bg-white text-[#0B0B0B] ${RING}` : 'text-gray-500 hover:text-gray-900 hover:bg-white/70'
+                    }`}
+                  >
+                    <span className="relative">
+                      <Icon className="w-6 h-6" strokeWidth={1.75} />
+                      {attention[id] && (
+                        <span aria-label="Needs attention" className="absolute -top-0.5 -right-2 w-1.5 h-1.5 rounded-full bg-[#7C5CFC]" />
+                      )}
+                    </span>
+                    <span className="max-w-full truncate">{label}</span>
+                  </button>
+                </div>
               );
             })}
           </nav>
         </div>
 
-        <div className="flex flex-col gap-3">
-          <p className="px-3 font-mono text-[10px] tracking-wider uppercase text-gray-400 font-bold">
-            Sample data · not saved
-          </p>
-          <div className="flex items-center gap-2.5 px-2">
-            <div className="w-8 h-8 rounded-full bg-gray-200 border border-gray-300 flex items-center justify-center text-xs font-semibold text-gray-700 shrink-0">
-              {initials}
-            </div>
-            <span className="truncate font-mono text-[11px] text-gray-500 min-w-0 flex-1">{email}</span>
-            <button
-              type="button"
-              onClick={onSignOut}
-              aria-label="Sign out"
-              title="Sign out"
-              className="p-1.5 text-gray-400 hover:text-gray-900 hover:bg-white rounded-lg transition-colors cursor-pointer"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
-          </div>
+        <div className="relative flex flex-col items-center gap-3">
+          <button
+            type="button"
+            aria-label="Help"
+            title="Help"
+            className="p-2 text-gray-500 hover:text-gray-900 rounded-lg transition-colors cursor-pointer"
+          >
+            <CircleHelp className="w-6 h-6" strokeWidth={1.75} />
+          </button>
+          <button
+            type="button"
+            onClick={() => setMenuOpen((o) => !o)}
+            aria-label="Account menu"
+            aria-expanded={menuOpen}
+            title={email}
+            className="w-11 h-11 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium text-gray-600 cursor-pointer hover:bg-gray-300 transition-colors"
+          >
+            {initials}
+          </button>
+          {menuOpen && (
+            <>
+              <button type="button" aria-label="Close menu" className="fixed inset-0 z-40 cursor-default" onClick={() => setMenuOpen(false)} />
+              <div className={`absolute left-full bottom-0 ml-2 z-50 w-56 rounded-xl bg-white p-2 ${RING}`}>
+                <p className="px-2 py-1.5 font-mono text-[11px] text-gray-500 truncate">{email}</p>
+                <button
+                  type="button"
+                  onClick={onSignOut}
+                  className="flex w-full items-center gap-2 px-2 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Sign out
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </aside>
 
@@ -85,7 +128,7 @@ export const AppShell: React.FC<{
             <button
               type="button"
               onClick={onSignOut}
-              className="inline-flex items-center gap-1.5 h-8 px-3 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-xs cursor-pointer"
+              className="inline-flex items-center gap-1.5 h-8 px-3 text-xs font-medium text-gray-700 bg-white rounded-lg shadow-xs cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
               Sign out
@@ -110,10 +153,13 @@ export const AppShell: React.FC<{
               onClick={() => onNavigate(id)}
               aria-current={active ? 'page' : undefined}
               className={`flex flex-col items-center gap-0.5 py-2.5 text-[10px] font-medium cursor-pointer ${
-                active ? 'text-emerald-700' : 'text-gray-400'
+                active ? 'text-[#0B0B0B]' : 'text-gray-400'
               }`}
             >
-              <Icon className="w-5 h-5" />
+              <span className="relative">
+                <Icon className="w-5 h-5" />
+                {attention[id] && <span className="absolute -top-0.5 -right-1.5 w-1.5 h-1.5 rounded-full bg-[#7C5CFC]" />}
+              </span>
               {label}
             </button>
           );
@@ -140,5 +186,5 @@ export const PageHeader: React.FC<{
 );
 
 export const Card: React.FC<{ className?: string; children: React.ReactNode }> = ({ className = '', children }) => (
-  <div className={`bg-white rounded-2xl border border-gray-200/80 shadow-xs ${className}`}>{children}</div>
+  <div className={`bg-white rounded-xl shadow-[0_1px_2px_rgba(11,11,11,0.06),0_0_0_1px_rgba(11,11,11,0.05)] ${className}`}>{children}</div>
 );
