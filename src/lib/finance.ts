@@ -1,5 +1,5 @@
-// Sample finance data + helpers for the signed-in workspace.
-// Nothing here is persisted: it all lives in memory (see AppDataProvider).
+// Types and pure helpers for the signed-in workspace.
+// The data itself comes from the backend (see AppDataProvider and lib/api.ts).
 
 export type CategoryKey =
   | 'income'
@@ -45,7 +45,21 @@ export interface Bill {
   paidOn?: string;
 }
 
-export const ACCOUNTS = ['HDFC Savings •••• 3432', 'ICICI Credit •••• 8841', 'Cash Wallet'] as const;
+export type AccountKind = 'asset' | 'liability';
+
+export interface Account {
+  id: string;
+  name: string;
+  kind: AccountKind;
+  type: string;
+  /** Balance before the first recorded transaction (INR; for liabilities, the amount owed). */
+  opening: number;
+}
+
+export const ACCOUNT_TYPES: Record<AccountKind, string[]> = {
+  asset: ['Savings', 'Checking', 'Cash', 'Investment', 'Property', 'Vehicle', 'Other asset'],
+  liability: ['Credit card', 'Loan', 'Mortgage', 'Other debt'],
+};
 
 /* ------------------------------ dates ------------------------------ */
 
@@ -97,86 +111,6 @@ export const formatSignedINR = (n: number, decimals = true) =>
 
 /* --------------------------- seed data ----------------------------- */
 
-const [HDFC, CARD, CASH] = ACCOUNTS;
-
-const tx = (
-  id: number,
-  name: string,
-  amount: number,
-  daysAgo: number,
-  category: CategoryKey,
-  account: string,
-): Transaction => ({ id: `t${id}`, name, amount, date: dayOffset(-daysAgo), category, account });
-
-export const SEED_TRANSACTIONS: Transaction[] = [
-  tx(1, 'Acme Ltd — Salary', 305000, 12, 'income', HDFC),
-  tx(2, 'Freelance — Design Project', 85000, 20, 'income', HDFC),
-  tx(3, 'Dividend — HDFC Bank', 18000, 8, 'income', HDFC),
-  tx(4, 'Interest Payment', 3214, 5, 'interest', HDFC),
-  tx(5, 'House Rent — Sector 21', -62000, 11, 'housing', HDFC),
-  tx(6, 'Swiggy', -684, 0, 'food', CARD),
-  tx(7, 'Zomato', -512, 1, 'food', CARD),
-  tx(8, 'BigBasket', -3240, 2, 'food', CARD),
-  tx(9, 'Starbucks', -420, 2, 'food', CASH),
-  tx(10, 'Uber', -386, 1, 'transport', CARD),
-  tx(11, 'Indian Oil — Fuel', -3500, 4, 'transport', CARD),
-  tx(12, 'Ola', -248, 6, 'transport', CARD),
-  tx(13, 'Netflix', -649, 7, 'subscriptions', CARD),
-  tx(14, 'Spotify', -119, 4, 'subscriptions', CARD),
-  tx(15, 'ChatGPT Plus', -1999, 9, 'subscriptions', CARD),
-  tx(16, 'PVR Cinemas', -1150, 3, 'entertainment', CARD),
-  tx(17, 'BookMyShow', -900, 15, 'entertainment', CARD),
-  tx(18, 'Amazon', -4799, 5, 'shopping', CARD),
-  tx(19, 'Myntra', -2899, 10, 'shopping', CARD),
-  tx(20, 'Decathlon', -3650, 18, 'shopping', CARD),
-  tx(21, 'PSPCL — Electricity', -4120, 17, 'utilities', HDFC),
-  tx(22, 'Airtel Broadband', -1179, 14, 'utilities', HDFC),
-  tx(23, 'Apollo Pharmacy', -1340, 8, 'health', CASH),
-  tx(24, 'Cult.fit Membership', -1800, 16, 'health', CARD),
-  tx(25, 'Blinkit', -890, 3, 'food', CARD),
-  tx(26, 'Barbeque Nation', -2860, 13, 'food', CARD),
-  tx(27, 'Acme Ltd — Salary', 305000, 42, 'income', HDFC),
-  tx(28, 'House Rent — Sector 21', -62000, 41, 'housing', HDFC),
-  tx(29, 'Interest Payment', 3102, 35, 'interest', HDFC),
-  tx(30, 'Amazon', -1999, 28, 'shopping', CARD),
-  tx(31, 'Cafe Coffee Day', -340, 0, 'food', CASH),
-  tx(32, 'Metro Recharge', -500, 9, 'transport', CASH),
-];
-
-const bill = (
-  id: number,
-  name: string,
-  amount: number,
-  due: number,
-  frequency: BillFrequency,
-  category: CategoryKey,
-  autopay: boolean,
-  paidDaysAgo?: number,
-): Bill => ({
-  id: `b${id}`,
-  name,
-  amount,
-  dueDate: dayOffset(due),
-  frequency,
-  category,
-  autopay,
-  status: paidDaysAgo === undefined ? 'unpaid' : 'paid',
-  paidOn: paidDaysAgo === undefined ? undefined : dayOffset(-paidDaysAgo),
-});
-
-export const SEED_BILLS: Bill[] = [
-  bill(1, 'PSPCL Electricity', 4850, -2, 'Monthly', 'utilities', false),
-  bill(2, 'Car EMI — HDFC Bank', 21300, 1, 'Monthly', 'transport', true),
-  bill(3, 'House Rent', 62000, 3, 'Monthly', 'housing', false),
-  bill(4, 'ICICI Credit Card', 18420, 6, 'Monthly', 'shopping', false),
-  bill(5, 'Airtel Broadband', 1179, 9, 'Monthly', 'utilities', true),
-  bill(6, 'Netflix', 649, 12, 'Monthly', 'subscriptions', true),
-  bill(7, 'LIC Health Insurance', 24500, 25, 'Yearly', 'insurance', false),
-  bill(8, 'Term Insurance', 8200, 48, 'Quarterly', 'insurance', true),
-  bill(9, 'Spotify', 119, 26, 'Monthly', 'subscriptions', true, 4),
-  bill(10, 'Society Maintenance', 2200, 24, 'Monthly', 'housing', false, 6),
-];
-
 /* ---------------------------- selectors ---------------------------- */
 
 export const sumBy = (list: Transaction[], pred: (t: Transaction) => boolean) =>
@@ -214,18 +148,6 @@ export const dueLabel = (b: Bill) => {
 /* ------------------------- budgets & months ------------------------- */
 
 /** Monthly budget (INR) per expense category. */
-export const SEED_BUDGETS: Partial<Record<CategoryKey, number>> = {
-  housing: 65000,
-  food: 14000,
-  transport: 9000,
-  entertainment: 4000,
-  shopping: 12000,
-  utilities: 7000,
-  health: 4000,
-  subscriptions: 3500,
-  insurance: 3000,
-};
-
 /** "YYYY-MM" of a date. */
 export const monthOf = (iso: string) => iso.slice(0, 7);
 
@@ -262,43 +184,20 @@ export interface Goal {
   deadline: string;
 }
 
-export const SEED_GOALS: Goal[] = [
-  { id: 'g1', name: 'Emergency fund', target: 600000, saved: 410000, deadline: dayOffset(150) },
-  { id: 'g2', name: 'Goa trip', target: 120000, saved: 45000, deadline: dayOffset(210) },
-  { id: 'g3', name: 'New laptop', target: 150000, saved: 140000, deadline: dayOffset(60) },
-];
 
 /* ------------------------- accounts & net worth ------------------------- */
 
-export type AccountKind = 'asset' | 'liability';
-
-export interface AccountInfo {
-  name: string;
-  kind: AccountKind;
-  type: string;
-  /** Balance on the day before the first seeded transaction (INR). */
-  opening: number;
-}
-
-export const ACCOUNT_INFO: AccountInfo[] = [
-  { name: ACCOUNTS[0], kind: 'asset', type: 'Savings', opening: 1250000 },
-  { name: ACCOUNTS[1], kind: 'liability', type: 'Credit card', opening: 42000 },
-  { name: ACCOUNTS[2], kind: 'asset', type: 'Cash', opening: 8000 },
-  { name: 'Mutual Funds', kind: 'asset', type: 'Investment', opening: 940000 },
-  { name: 'Home Loan', kind: 'liability', type: 'Loan', opening: 2150000 },
-];
-
 /** Current balance of an account: opening balance plus every transaction on it. */
-export const accountBalance = (info: AccountInfo, list: Transaction[]) => {
+export const accountBalance = (info: Account, list: Transaction[]) => {
   const delta = list.filter((t) => t.account === info.name).reduce((n, t) => n + t.amount, 0);
   // Liabilities are stored as a positive amount owed; spending raises it.
   return info.kind === 'liability' ? info.opening - delta : info.opening + delta;
 };
 
-export const netWorthSummary = (list: Transaction[]) => {
+export const netWorthSummary = (accounts: Account[], list: Transaction[]) => {
   let assets = 0;
   let liabilities = 0;
-  for (const a of ACCOUNT_INFO) {
+  for (const a of accounts) {
     const b = accountBalance(a, list);
     if (a.kind === 'asset') assets += b;
     else liabilities += b;
@@ -307,9 +206,9 @@ export const netWorthSummary = (list: Transaction[]) => {
 };
 
 /** Net worth at the end of each of the last `days` days (oldest first). */
-export const netWorthSeries = (list: Transaction[], days = 30) => {
+export const netWorthSeries = (accounts: Account[], list: Transaction[], days = 30) => {
   const today = toISO(startOfToday());
-  const { net } = netWorthSummary(list);
+  const { net } = netWorthSummary(accounts, list);
   const byDay = new Map<string, number>();
   for (const t of list) byDay.set(t.date, (byDay.get(t.date) ?? 0) + t.amount);
   const out: { date: string; value: number }[] = [];

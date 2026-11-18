@@ -26,13 +26,75 @@ export interface ResetToken {
   usedAt: string | null;
 }
 
+export type CategoryKey =
+  | 'income' | 'interest' | 'housing' | 'food' | 'transport' | 'entertainment'
+  | 'shopping' | 'utilities' | 'health' | 'subscriptions' | 'insurance';
+
+export interface Account {
+  id: string;
+  /** Unique per user (case-insensitive); transactions reference accounts by name. */
+  name: string;
+  kind: 'asset' | 'liability';
+  type: string;
+  /** Balance before the first recorded transaction (INR, positive; liabilities = amount owed). */
+  opening: number;
+}
+
+export interface Transaction {
+  id: string;
+  name: string;
+  /** Positive = money in, negative = money out (INR). */
+  amount: number;
+  /** Local calendar date, YYYY-MM-DD. */
+  date: string;
+  category: CategoryKey;
+  account: string;
+  tags?: string[];
+  notes?: string;
+  excluded?: boolean;
+}
+
+export type BillFrequency = 'Monthly' | 'Quarterly' | 'Yearly';
+
+export interface Bill {
+  id: string;
+  name: string;
+  amount: number;
+  dueDate: string;
+  frequency: BillFrequency;
+  category: CategoryKey;
+  autopay: boolean;
+  status: 'unpaid' | 'paid';
+  paidOn?: string;
+}
+
+export interface Goal {
+  id: string;
+  name: string;
+  target: number;
+  saved: number;
+  deadline: string;
+}
+
+export interface FinanceData {
+  accounts: Account[];
+  transactions: Transaction[];
+  bills: Bill[];
+  budgets: Partial<Record<CategoryKey, number>>;
+  goals: Goal[];
+}
+
+export const emptyFinance = (): FinanceData => ({ accounts: [], transactions: [], bills: [], budgets: {}, goals: [] });
+
 export interface Data {
   users: User[];
   sessions: Session[];
   resetTokens: ResetToken[];
+  /** Each user's own money data, keyed by user id. */
+  finance: Record<string, FinanceData>;
 }
 
-const emptyData = (): Data => ({ users: [], sessions: [], resetTokens: [] });
+const emptyData = (): Data => ({ users: [], sessions: [], resetTokens: [], finance: {} });
 
 /**
  * Tiny JSON-file persistence layer for local development.
@@ -59,6 +121,7 @@ export class JsonStore {
         users: parsed.users ?? [],
         sessions: parsed.sessions ?? [],
         resetTokens: parsed.resetTokens ?? [],
+        finance: parsed.finance ?? {},
       };
     } catch (err) {
       if ((err as NodeJS.ErrnoException).code === 'ENOENT') {

@@ -7,7 +7,7 @@ const FREQUENCIES: BillFrequency[] = ['Monthly', 'Quarterly', 'Yearly'];
 
 export const BillModal: React.FC<{
   onClose: () => void;
-  onSave: (b: Omit<Bill, 'id' | 'status' | 'paidOn'>) => void;
+  onSave: (b: Omit<Bill, 'id' | 'status' | 'paidOn'>) => Promise<boolean>;
 }> = ({ onClose, onSave }) => {
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
@@ -17,8 +17,11 @@ export const BillModal: React.FC<{
   const [autopay, setAutopay] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const submit = (e: React.FormEvent) => {
+  const [saving, setSaving] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (saving) return;
     const value = Number(amount);
     const next: Record<string, string> = {};
     if (!name.trim()) next.name = 'Enter a bill name.';
@@ -26,8 +29,10 @@ export const BillModal: React.FC<{
     if (!dueDate) next.dueDate = 'Pick a due date.';
     setErrors(next);
     if (Object.keys(next).length) return;
-    onSave({ name: name.trim(), amount: value, dueDate, frequency, category, autopay });
-    onClose();
+    setSaving(true);
+    const ok = await onSave({ name: name.trim(), amount: value, dueDate, frequency, category, autopay });
+    setSaving(false);
+    if (ok) onClose();
   };
 
   return (
@@ -70,7 +75,7 @@ export const BillModal: React.FC<{
 
         <div className="flex justify-end gap-2 pt-1">
           <button type="button" onClick={onClose} className={secondaryBtn}>Cancel</button>
-          <button type="submit" className={primaryBtn}>Add bill</button>
+          <button type="submit" disabled={saving} className={primaryBtn}>{saving ? 'Saving…' : 'Add bill'}</button>
         </div>
       </form>
     </Modal>

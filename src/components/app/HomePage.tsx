@@ -5,7 +5,6 @@ import { Card, PageHeader, type Page } from './AppShell';
 import { CATEGORIES, CategoryTile } from './categories';
 import { primaryBtn } from './Modal';
 import {
-  ACCOUNT_INFO,
   accountBalance,
   netWorthSeries,
   netWorthSummary,
@@ -62,12 +61,13 @@ const Stat: React.FC<{ label: string; value: string; hint?: string; icon: React.
   </Card>
 );
 
-export const HomePage: React.FC<{ name: string; onNavigate: (p: Page) => void; onAdd: () => void }> = ({
+export const HomePage: React.FC<{ name: string; onNavigate: (p: Page) => void; onAdd: () => void; onAddAccount: () => void }> = ({
   name,
   onNavigate,
   onAdd,
+  onAddAccount,
 }) => {
-  const { transactions, bills } = useAppData();
+  const { transactions, bills, accounts } = useAppData();
 
   const m = useMemo(() => {
     const recent = inLastDays(transactions, 30);
@@ -97,8 +97,8 @@ export const HomePage: React.FC<{ name: string; onNavigate: (p: Page) => void; o
         .slice(0, 4),
     [bills],
   );
-  const nw = useMemo(() => netWorthSummary(transactions), [transactions]);
-  const series = useMemo(() => netWorthSeries(transactions, 30), [transactions]);
+  const nw = useMemo(() => netWorthSummary(accounts, transactions), [accounts, transactions]);
+  const series = useMemo(() => netWorthSeries(accounts, transactions, 30), [accounts, transactions]);
   const nwChange = series[0].value ? ((nw.net - series[0].value) / Math.abs(series[0].value)) * 100 : 0;
   const recent = useMemo(() => sortByDateDesc(transactions).slice(0, 6), [transactions]);
   const maxDaily = Math.max(...m.daily.map((d) => d.spend), 1);
@@ -178,14 +178,25 @@ export const HomePage: React.FC<{ name: string; onNavigate: (p: Page) => void; o
 
         {/* Accounts */}
         <Card className="lg:col-span-12 p-4 sm:p-5">
-          <h2 className="font-semibold text-gray-900 text-base mb-3">Accounts</h2>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-semibold text-gray-900 text-base">Accounts</h2>
+            <button type="button" onClick={onAddAccount} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-700 hover:text-gray-950 bg-white border border-gray-300 rounded-lg px-3 h-8 shadow-xs cursor-pointer">
+              <Plus className="w-3.5 h-3.5" /> Add account
+            </button>
+          </div>
+          {accounts.length === 0 ? (
+            <div className="py-8 text-center">
+              <p className="text-sm font-medium text-gray-900">No accounts yet</p>
+              <p className="text-xs text-gray-400 mt-1">Add a bank account, card, loan or cash wallet to start tracking your net worth.</p>
+            </div>
+          ) : (
           <div className="grid sm:grid-cols-2 gap-x-8 gap-y-1">
             {(['asset', 'liability'] as const).map((kind) => (
               <div key={kind}>
                 <p className="font-mono text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">
                   {kind === 'asset' ? 'Assets' : 'Liabilities'}
                 </p>
-                {ACCOUNT_INFO.filter((a) => a.kind === kind).map((a) => (
+                {accounts.filter((a) => a.kind === kind).map((a) => (
                   <div key={a.name} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0 text-sm">
                     <div className="min-w-0">
                       <p className="font-medium text-gray-900 truncate">{a.name}</p>
@@ -197,6 +208,7 @@ export const HomePage: React.FC<{ name: string; onNavigate: (p: Page) => void; o
               </div>
             ))}
           </div>
+          )}
         </Card>
 
         {/* Spending by category */}
@@ -261,6 +273,7 @@ export const HomePage: React.FC<{ name: string; onNavigate: (p: Page) => void; o
               View all <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
+          {recent.length === 0 && <p className="text-sm text-gray-400 py-6 text-center">No transactions yet. Use “New transaction” to add your first one.</p>}
           <ul className="divide-y divide-gray-50">
             {recent.map((t) => (
               <li key={t.id} className="flex items-center gap-3 py-2.5">

@@ -14,6 +14,8 @@ export interface Config {
   rememberMeDays: number;
   resetTokenMinutes: number;
   trustProxy: boolean;
+  /** Seed artha@gmail.com with sample data (reset on every sign-in). */
+  demoAccount: boolean;
   rateLimits: {
     signinAttempts: number;
     signupPerWindow: number;
@@ -32,6 +34,7 @@ const schema = z.object({
   REMEMBER_ME_DAYS: z.coerce.number().positive().default(30),
   RESET_TOKEN_MINUTES: z.coerce.number().positive().default(30),
   TRUST_PROXY: z.enum(['true', 'false']).default('false'),
+  DEMO_ACCOUNT: z.enum(['true', 'false']).optional(),
 });
 
 export const loadConfig = (): Config => {
@@ -58,6 +61,8 @@ export const loadConfig = (): Config => {
     rememberMeDays: env.REMEMBER_ME_DAYS,
     resetTokenMinutes: env.RESET_TOKEN_MINUTES,
     trustProxy: env.TRUST_PROXY === 'true',
+    // On by default for local development, off in production unless asked for.
+    demoAccount: (env.DEMO_ACCOUNT ?? (env.NODE_ENV === 'production' ? 'false' : 'true')) === 'true',
     rateLimits: {
       signinAttempts: 8,
       signupPerWindow: 20,

@@ -4,6 +4,7 @@ import type { Config } from './config.js';
 import { consoleMailer, type Mailer } from './mailer.js';
 import { apiHeaders, errorHandler, loadSession, notFound, originGuard } from './middleware.js';
 import { createAuthRouter } from './routes/auth.js';
+import { createFinanceRouter } from './routes/finance.js';
 import type { JsonStore } from './store.js';
 
 export interface AppDeps {
@@ -18,12 +19,14 @@ export const createApp = ({ config, store, mailer = consoleMailer(config) }: App
   app.set('trust proxy', config.trustProxy);
 
   app.use(cors({ origin: config.clientOrigins, credentials: true }));
-  app.use('/api', apiHeaders, originGuard(config), express.json({ limit: '10kb' }), loadSession(store));
+  app.use('/api', apiHeaders, originGuard(config), express.json({ limit: '100kb' }), loadSession(store));
 
   app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok' });
   });
   app.use('/api/auth', createAuthRouter({ config, store, mailer }));
+
+  app.use('/api/finance', createFinanceRouter({ store }));
 
   app.use(notFound);
   app.use(errorHandler);

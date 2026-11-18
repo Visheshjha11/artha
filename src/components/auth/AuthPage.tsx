@@ -17,7 +17,11 @@ import {
 } from 'lucide-react';
 import { ArthaWordmark, GithubIcon } from '../landing/AarthLogo';
 import { RainbowStrip } from '../landing/RainbowStrip';
-import { api, errorText } from '../../lib/api';
+import { api, errorText, type ApiUser } from '../../lib/api';
+
+// Seeded by the backend (see backend/src/demo.ts); it is the only login with sample data.
+const DEMO_EMAIL = 'artha@gmail.com';
+const DEMO_PASSWORD = 'artha1234';
 
 type Mode = 'signin' | 'signup';
 type Provider = 'google' | 'github';
@@ -25,7 +29,7 @@ type Provider = 'google' | 'github';
 interface AuthPageProps {
   initialMode?: Mode;
   onBack?: () => void;
-  onSuccess?: (userEmail?: string) => void;
+  onSuccess?: (user: ApiUser) => void;
 }
 
 const GoogleIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' }) => (
@@ -104,9 +108,9 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
   const showToast = (kind: 'success' | 'error', text: string) => setToast({ kind, text });
 
-  const finish = (message: string, userEmail: string) => {
+  const finish = (message: string, user: ApiUser) => {
     showToast('success', message);
-    later(() => onSuccess?.(userEmail), 900);
+    later(() => onSuccess?.(user), 900);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -124,7 +128,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
         : await api.signin({ email, password, rememberMe });
       finish(
         isSignup ? 'Account created. Welcome to Artha!' : 'Welcome back! Signing you in…',
-        user.email,
+        user,
       );
     } catch (err) {
       showToast('error', errorText(err));
@@ -142,16 +146,21 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     );
   };
 
-  const handleDemo = () => {
+  // The demo is a real account (seeded by the backend) with sample data.
+  const handleDemo = async () => {
     if (busy) return;
-    setEmail('demo.user@artha.finance');
-    setPassword('Demopassword123!');
+    setEmail(DEMO_EMAIL);
+    setPassword(DEMO_PASSWORD);
     setToast(null);
     setLoading(true);
-    later(() => {
+    try {
+      const { user } = await api.signin({ email: DEMO_EMAIL, password: DEMO_PASSWORD, rememberMe: false });
+      finish('Launching the demo with sample data…', user);
+    } catch (err) {
+      showToast('error', errorText(err));
+    } finally {
       setLoading(false);
-      finish('Launching the demo with sample data…', 'demo.user@artha.finance');
-    }, 600);
+    }
   };
 
   const handleForgot = async (e: React.FormEvent) => {

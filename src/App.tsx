@@ -9,12 +9,10 @@ import { AiSection } from './components/landing/AiSection';
 import { Footer } from './components/landing/Footer';
 import { AuthPage } from './components/auth/AuthPage';
 import { Workspace } from './components/app/Workspace';
-import { api } from './lib/api';
+import { api, type ApiUser } from './lib/api';
 import { useScrollReveal } from './lib/motion';
 
-type View = 'landing' | 'signin' | 'signup' | 'demo';
-
-const DEMO_EMAIL = 'demo.user@artha.finance';
+type View = 'landing' | 'signin' | 'signup' | 'app';
 
 // Every "Try it" button on the landing page links to #try, so a tiny hash
 // router is all that's needed. Other hashes (#tracking, #terms, …) are
@@ -26,7 +24,8 @@ const viewFromHash = (current: View): View => {
     case '#signup':
       return 'signup';
     case '#demo':
-      return 'demo';
+      // The demo is a real login now, so send people to the sign-in screen.
+      return 'signin';
     case '':
     case '#':
       return 'landing';
@@ -57,19 +56,15 @@ const Landing: React.FC = () => {
 
 export const App: React.FC = () => {
   const [view, setView] = useState<View>(() => viewFromHash('landing'));
-  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [user, setUser] = useState<ApiUser | null>(null);
   const [checkingSession, setCheckingSession] = useState(true);
-
-  // "#demo" skips the login screen and opens the workspace with the same demo
-  // account the "Try demo" button on the login page uses (sample data only).
-  const activeEmail = userEmail ?? (view === 'demo' ? DEMO_EMAIL : null);
 
   // Restore an existing session (cookie) so a refresh keeps you signed in.
   useEffect(() => {
     let cancelled = false;
     api
       .me()
-      .then(({ user }) => !cancelled && setUserEmail(user.email))
+      .then(({ user: me }) => !cancelled && setUser(me))
       .catch(() => undefined)
       .finally(() => !cancelled && setCheckingSession(false));
     return () => {
@@ -98,13 +93,15 @@ export const App: React.FC = () => {
   if (checkingSession && (view === 'signin' || view === 'signup')) return null;
 
   // Signed-in users go straight to the workspace instead of the login page.
-  if (activeEmail && view !== 'landing') {
+  if (user && view !== 'landing') {
     return (
       <Workspace
-        email={activeEmail}
+        key={user.id}
+        email={user.email}
+        name={user.name}
         onSignOut={async () => {
           await api.signout().catch(() => undefined);
-          setUserEmail(null);
+          setUser(null);
           goLanding();
         }}
       />
@@ -117,9 +114,9 @@ export const App: React.FC = () => {
         key={view}
         initialMode={view}
         onBack={goLanding}
-        onSuccess={(email) => {
-          setUserEmail(email ?? DEMO_EMAIL);
-          setView('demo');
+        onSuccess={(signedIn) => {
+          setUser(signedIn);
+          setView('app');
           window.history.pushState(null, '', window.location.pathname + window.location.search);
         }}
       />

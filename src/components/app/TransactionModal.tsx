@@ -1,19 +1,24 @@
 import React, { useState } from 'react';
 import { Field, Modal, inputClass, primaryBtn, secondaryBtn } from './Modal';
 import { CATEGORIES, EXPENSE_CATEGORY_KEYS, INCOME_CATEGORY_KEYS } from './categories';
-import { ACCOUNTS, dayOffset, type CategoryKey, type Transaction } from '../../lib/finance';
+import { useAppData } from './AppData';
+import { dayOffset, type CategoryKey, type Transaction } from '../../lib/finance';
 
 export const TransactionModal: React.FC<{
   onClose: () => void;
-  onSave: (t: Omit<Transaction, 'id'>) => void;
-}> = ({ onClose, onSave }) => {
+  onSave: (t: Omit<Transaction, 'id'>) => Promise<boolean>;
+  onAddAccount: () => void;
+}> = ({ onClose, onSave, onAddAccount }) => {
+  const { accounts } = useAppData();
   const [kind, setKind] = useState<'expense' | 'income'>('expense');
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState<CategoryKey>('food');
-  const [account, setAccount] = useState<string>(ACCOUNTS[0]);
+  const [account, setAccount] = useState<string>('');
   const [date, setDate] = useState(dayOffset(0));
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [saving, setSaving] = useState(false);
+  const accountName = account || accounts[0]?.name || '';
 
   const categories = kind === 'expense' ? EXPENSE_CATEGORY_KEYS : INCOME_CATEGORY_KEYS;
 
@@ -22,8 +27,9 @@ export const TransactionModal: React.FC<{
     setCategory(k === 'expense' ? 'food' : 'income');
   };
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (saving) return;
     const value = Number(amount);
     const next: Record<string, string> = {};
     if (!name.trim()) next.name = 'Enter a name or merchant.';
@@ -31,15 +37,29 @@ export const TransactionModal: React.FC<{
     if (!date) next.date = 'Pick a date.';
     setErrors(next);
     if (Object.keys(next).length) return;
-    onSave({
+    setSaving(true);
+    const ok = await onSave({
       name: name.trim(),
       amount: kind === 'expense' ? -value : value,
       date,
       category,
-      account,
+      account: accountName,
     });
-    onClose();
+    setSaving(false);
+    if (ok) onClose();
   };
+
+  if (accounts.length === 0) {
+    return (
+      <Modal title="New transaction" onClose={onClose}>
+        <p className="text-sm text-gray-600">Add an account first, such as a bank account, card or cash wallet. Every transaction belongs to one.</p>
+        <div className="flex justify-end gap-2 pt-4">
+          <button type="button" onClick={onClose} className={secondaryBtn}>Cancel</button>
+          <button type="button" onClick={onAddAccount} className={primaryBtn}>Add account</button>
+        </div>
+      </Modal>
+    );
+  }
 
   return (
     <Modal title="New transaction" onClose={onClose}>
@@ -82,9 +102,9 @@ export const TransactionModal: React.FC<{
             </select>
           </Field>
           <Field label="Account" htmlFor="tx-acct">
-            <select id="tx-acct" className={inputClass} value={account} onChange={(e) => setAccount(e.target.value)}>
-              {ACCOUNTS.map((a) => (
-                <option key={a} value={a}>{a}</option>
+            <select id="tx-acct" className={inputClass} value={accountName} onChange={(e) => setAccount(e.target.value)}>
+              {accounts.map((a) => (
+                <option key={a.id} value={a.name}>{a.name}</option>
               ))}
             </select>
           </Field>
@@ -92,7 +112,7 @@ export const TransactionModal: React.FC<{
 
         <div className="flex justify-end gap-2 pt-1">
           <button type="button" onClick={onClose} className={secondaryBtn}>Cancel</button>
-          <button type="submit" className={primaryBtn}>Add transaction</button>
+          <button type="submit" disabled={saving} className={primaryBtn}>{saving ? 'Saving…' : 'Add transaction'}</button>
         </div>
       </form>
     </Modal>

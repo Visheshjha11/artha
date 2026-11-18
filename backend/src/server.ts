@@ -1,16 +1,18 @@
 import { createApp } from './app.js';
 import { loadConfig } from './config.js';
+import { ensureDemoUser } from './demo.js';
 import { JsonStore } from './store.js';
 
 const config = loadConfig();
 const store = new JsonStore(config.dataFile);
 await store.load();
 await store.purgeExpired();
+if (config.demoAccount) await ensureDemoUser(store);
 
 const app = createApp({ config, store });
 
 const server = app.listen(config.port, config.host, () => {
-  console.log(`Artha auth API listening on http://${config.host}:${config.port}`);
+  console.log(`Artha API listening on http://${config.host}:${config.port}`);
   console.log(`Allowed browser origins: ${config.clientOrigins.join(', ')}`);
   console.log(`Data file: ${config.dataFile}`);
 });

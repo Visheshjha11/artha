@@ -5,7 +5,6 @@ import { Card, PageHeader } from './AppShell';
 import { CATEGORIES, CATEGORY_KEYS, CategoryChip, CategoryTile } from './categories';
 import { inputClass, primaryBtn, secondaryBtn } from './Modal';
 import {
-  ACCOUNTS,
   downloadCSV,
   formatGroupDate,
   formatINR,
@@ -25,7 +24,7 @@ const TYPE_OPTIONS: { id: TypeFilter; label: string }[] = [
 ];
 
 export const TransactionsPage: React.FC<{ onAdd: () => void }> = ({ onAdd }) => {
-  const { transactions, deleteTransactions, updateTransactions } = useAppData();
+  const { transactions, accounts, deleteTransactions, updateTransactions } = useAppData();
   const [tagInput, setTagInput] = useState('');
   const [tagFilter, setTagFilter] = useState('all');
   const [query, setQuery] = useState('');
@@ -115,7 +114,7 @@ export const TransactionsPage: React.FC<{ onAdd: () => void }> = ({ onAdd }) => 
       <PageHeader
         crumb="Home / Transactions"
         title="Transactions"
-        subtitle={`${transactions.length} transactions across ${ACCOUNTS.length} accounts`}
+        subtitle={`${transactions.length} transactions across ${accounts.length} account${accounts.length === 1 ? '' : 's'}`}
         action={
           <div className="flex gap-2">
             <button type="button" onClick={exportCSV} className={secondaryBtn}>
@@ -181,8 +180,8 @@ export const TransactionsPage: React.FC<{ onAdd: () => void }> = ({ onAdd }) => 
               className={`${inputClass} !w-auto !py-1.5 text-xs`}
             >
               <option value="all">All accounts</option>
-              {ACCOUNTS.map((a) => (
-                <option key={a} value={a}>{a}</option>
+              {accounts.map((a) => (
+                <option key={a.id} value={a.name}>{a.name}</option>
               ))}
             </select>
 
@@ -268,10 +267,19 @@ export const TransactionsPage: React.FC<{ onAdd: () => void }> = ({ onAdd }) => 
           <div className="py-14 text-center">
             <p className="text-sm font-medium text-gray-900">No transactions found</p>
             <p className="text-xs text-gray-400 mt-1">
-              {filtersActive ? 'Try changing or clearing your filters.' : 'Add your first transaction to get started.'}
+              {filtersActive
+                ? 'Try changing or clearing your filters.'
+                : accounts.length === 0
+                  ? 'Add an account, then record your first transaction.'
+                  : 'Add your first transaction to get started.'}
             </p>
-            {filtersActive && (
+            {filtersActive ? (
               <button type="button" onClick={clearFilters} className={`${secondaryBtn} mt-4`}>Clear filters</button>
+            ) : (
+              <button type="button" onClick={onAdd} className={`${primaryBtn} mt-4`}>
+                <Plus className="w-3.5 h-3.5" />
+                {accounts.length === 0 ? 'Add account' : 'New transaction'}
+              </button>
             )}
           </div>
         ) : (

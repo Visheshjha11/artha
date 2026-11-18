@@ -2,6 +2,16 @@
 // Requests go to /api/... and the Vite dev server proxies them to the backend,
 // so the session cookie stays same-origin and no CORS setup is needed.
 
+import type { Account, Bill, BillFrequency, CategoryKey, Goal, Transaction } from './finance';
+
+export interface FinanceSnapshot {
+  accounts: Account[];
+  transactions: Transaction[];
+  bills: Bill[];
+  budgets: Partial<Record<CategoryKey, number>>;
+  goals: Goal[];
+}
+
 export interface ApiUser {
   id: string;
   name: string;
@@ -25,10 +35,10 @@ export class ApiError extends Error {
 const UNREACHABLE =
   'Cannot reach the server. Start the backend with "npm run dev" inside the backend folder.';
 
-async function request<T>(method: 'GET' | 'POST', path: string, body?: unknown): Promise<T> {
+async function request<T>(method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', path: string, body?: unknown): Promise<T> {
   let res: Response;
   try {
-    res = await fetch(`/api/auth${path}`, {
+    res = await fetch(`/api${path}`, {
       method,
       credentials: 'same-origin',
       ...(body !== undefined
@@ -58,13 +68,29 @@ async function request<T>(method: 'GET' | 'POST', path: string, body?: unknown):
 
 export const api = {
   signup: (input: { name: string; email: string; password: string }) =>
-    request<{ user: ApiUser }>('POST', '/signup', input),
+    request<{ user: ApiUser }>('POST', '/auth/signup', input),
   signin: (input: { email: string; password: string; rememberMe: boolean }) =>
-    request<{ user: ApiUser }>('POST', '/signin', input),
-  signout: () => request<void>('POST', '/signout', {}),
-  me: () => request<{ user: ApiUser }>('GET', '/me'),
+    request<{ user: ApiUser }>('POST', '/auth/signin', input),
+  signout: () => request<void>('POST', '/auth/signout', {}),
+  me: () => request<{ user: ApiUser }>('GET', '/auth/me'),
   forgotPassword: (email: string) =>
-    request<{ message: string }>('POST', '/forgot-password', { email }),
+    request<{ message: string }>('POST', '/auth/forgot-password', { email }),
+  finance: {
+    get: () => request<FinanceSnapshot>('GET', '/finance'),
+    addAccount: (a: Omit<Account, 'id'>) => request<FinanceSnapshot>('POST', '/finance/accounts', a),
+    deleteAccount: (id: string) => request<FinanceSnapshot>('DELETE', `/finance/accounts/${id}`),
+    addTransaction: (t: Omit<Transaction, 'id'>) => request<FinanceSnapshot>('POST', '/finance/transactions', t),
+    updateTransactions: (ids: string[], patch: Partial<Omit<Transaction, 'id'>>, addTags?: string[]) =>
+      request<FinanceSnapshot>('PATCH', '/finance/transactions', { ids, patch, ...(addTags ? { addTags } : {}) }),
+    deleteTransactions: (ids: string[]) => request<FinanceSnapshot>('POST', '/finance/transactions/delete', { ids }),
+    addBill: (b: { name: string; amount: number; dueDate: string; frequency: BillFrequency; category: CategoryKey; autopay: boolean }) =>
+      request<FinanceSnapshot>('POST', '/finance/bills', b),
+    payBill: (id: string, account?: string) => request<FinanceSnapshot>('POST', `/finance/bills/${id}/pay`, account ? { account } : {}),
+    deleteBill: (id: string) => request<FinanceSnapshot>('DELETE', `/finance/bills/${id}`),
+    setBudget: (category: CategoryKey, amount: number) => request<FinanceSnapshot>('PUT', `/finance/budgets/${category}`, { amount }),
+    addGoal: (g: { name: string; target: number; deadline: string }) => request<FinanceSnapshot>('POST', '/finance/goals', g),
+    contributeGoal: (id: string, amount: number) => request<FinanceSnapshot>('POST', `/finance/goals/${id}/contribute`, { amount }),
+  },
 };
 
 /** Text for the toast: the first field problem if there is one, else the general message. */

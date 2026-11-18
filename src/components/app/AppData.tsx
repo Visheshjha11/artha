@@ -1,113 +1,100 @@
-import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
-import {
-  ACCOUNTS,
-  SEED_BILLS,
-  SEED_BUDGETS,
-  SEED_GOALS,
-  SEED_TRANSACTIONS,
-  dayOffset,
-  type Bill,
-  type CategoryKey,
-  type Goal,
-  type Transaction,
-} from '../../lib/finance';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { api, errorText, type FinanceSnapshot } from '../../lib/api';
+import type { Account, Bill, BillFrequency, CategoryKey, Goal, Transaction } from '../../lib/finance';
 
 interface AppData {
+  /** True until the first load from the server finishes. */
+  loading: boolean;
+  /** Set when the first load failed; the workspace shows a retry screen. */
+  loadError: string | null;
+  /** Message from the most recent failed change (shown as a banner). */
+  error: string | null;
+  clearError: () => void;
+  reload: () => Promise<void>;
+
+  accounts: Account[];
+  addAccount: (a: Omit<Account, 'id'>) => Promise<boolean>;
+  deleteAccount: (id: string) => Promise<void>;
   transactions: Transaction[];
+  addTransaction: (t: Omit<Transaction, 'id'>) => Promise<boolean>;
+  updateTransactions: (ids: string[], patch: Partial<Omit<Transaction, 'id'>>, addTags?: string[]) => Promise<void>;
+  deleteTransactions: (ids: string[]) => Promise<void>;
   bills: Bill[];
+  addBill: (b: { name: string; amount: number; dueDate: string; frequency: BillFrequency; category: CategoryKey; autopay: boolean }) => Promise<boolean>;
+  markBillPaid: (id: string, account?: string) => Promise<void>;
+  deleteBill: (id: string) => Promise<void>;
   budgets: Partial<Record<CategoryKey, number>>;
-  setBudget: (c: CategoryKey, amount: number) => void;
+  setBudget: (c: CategoryKey, amount: number) => Promise<void>;
   goals: Goal[];
-  addGoal: (g: Omit<Goal, 'id' | 'saved'>) => void;
-  contributeGoal: (id: string, amount: number) => void;
-  addTransaction: (t: Omit<Transaction, 'id'>) => void;
-  deleteTransactions: (ids: string[]) => void;
-  updateTransactions: (ids: string[], patch: Partial<Omit<Transaction, 'id'>>, addTags?: string[]) => void;
-  addBill: (b: Omit<Bill, 'id' | 'status' | 'paidOn'>) => void;
-  markBillPaid: (id: string) => void;
-  deleteBill: (id: string) => void;
+  addGoal: (g: { name: string; target: number; deadline: string }) => Promise<boolean>;
+  contributeGoal: (id: string, amount: number) => Promise<void>;
 }
 
 const Ctx = createContext<AppData | null>(null);
 
-let counter = 0;
-const nextId = (prefix: string) => `${prefix}-new-${Date.now()}-${counter++}`;
+const EMPTY: FinanceSnapshot = { accounts: [], transactions: [], bills: [], budgets: {}, goals: [] };
 
-// In-memory store shared by every page, so paying a bill adds a transaction
-// and the dashboard stays in sync. Swap for real API calls once those exist.
+// Every change goes to the backend, which answers with the user's full data;
+// that answer replaces local state, so the screen always shows what is saved.
 export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [transactions, setTransactions] = useState<Transaction[]>(SEED_TRANSACTIONS);
-  const [bills, setBills] = useState<Bill[]>(SEED_BILLS);
-  const [budgets, setBudgets] = useState(SEED_BUDGETS);
-  const [goals, setGoals] = useState<Goal[]>(SEED_GOALS);
+  const [data, setData] = useState<FinanceSnapshot>(EMPTY);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const addGoal = useCallback((g: Omit<Goal, 'id' | 'saved'>) => {
-    setGoals((prev) => [...prev, { ...g, id: nextId('g'), saved: 0 }]);
+  const reload = useCallback(async () => {
+    setLoading(true);
+    setLoadError(null);
+    try {
+      setData(await api.finance.get());
+    } catch (err) {
+      setLoadError(errorText(err));
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const contributeGoal = useCallback((id: string, amount: number) => {
-    setGoals((prev) => prev.map((g) => (g.id === id ? { ...g, saved: Math.min(g.target, g.saved + amount) } : g)));
+  useEffect(() => {
+    void reload();
+  }, [reload]);
+
+  /** Run a change; on success store the new snapshot, on failure show the message. */
+  const run = useCallback(async (call: () => Promise<FinanceSnapshot>): Promise<boolean> => {
+    try {
+      setData(await call());
+      setError(null);
+      return true;
+    } catch (err) {
+      setError(errorText(err));
+      return false;
+    }
   }, []);
 
-  const setBudget = useCallback((c: CategoryKey, amount: number) => {
-    setBudgets((prev) => ({ ...prev, [c]: Math.max(0, amount) }));
-  }, []);
-
-  const addTransaction = useCallback((t: Omit<Transaction, 'id'>) => {
-    setTransactions((prev) => [{ ...t, id: nextId('t') }, ...prev]);
-  }, []);
-
-  const deleteTransactions = useCallback((ids: string[]) => {
-    const drop = new Set(ids);
-    setTransactions((prev) => prev.filter((t) => !drop.has(t.id)));
-  }, []);
-
-  const updateTransactions = useCallback(
-    (ids: string[], patch: Partial<Omit<Transaction, 'id'>>, addTags?: string[]) => {
-      const set = new Set(ids);
-      setTransactions((prev) =>
-        prev.map((t) =>
-          set.has(t.id)
-            ? { ...t, ...patch, tags: addTags ? [...new Set([...(t.tags ?? []), ...addTags])] : (patch.tags ?? t.tags) }
-            : t,
-        ),
-      );
-    },
-    [],
-  );
-
-  const addBill = useCallback((b: Omit<Bill, 'id' | 'status' | 'paidOn'>) => {
-    setBills((prev) => [...prev, { ...b, id: nextId('b'), status: 'unpaid' }]);
-  }, []);
-
-  const markBillPaid = useCallback(
-    (id: string) => {
-      const target = bills.find((b) => b.id === id);
-      if (!target || target.status === 'paid') return;
-      const today = dayOffset(0);
-      setBills((prev) => prev.map((b) => (b.id === id ? { ...b, status: 'paid', paidOn: today } : b)));
-      setTransactions((prev) => [
-        {
-          id: nextId('t'),
-          name: target.name,
-          amount: -target.amount,
-          date: today,
-          category: target.category,
-          account: ACCOUNTS[0],
-        },
-        ...prev,
-      ]);
-    },
-    [bills],
-  );
-
-  const deleteBill = useCallback((id: string) => {
-    setBills((prev) => prev.filter((b) => b.id !== id));
-  }, []);
-
-  const value = useMemo(
-    () => ({ transactions, bills, budgets, setBudget, goals, addGoal, contributeGoal, addTransaction, deleteTransactions, updateTransactions, addBill, markBillPaid, deleteBill }),
-    [transactions, bills, budgets, setBudget, goals, addGoal, contributeGoal, addTransaction, deleteTransactions, updateTransactions, addBill, markBillPaid, deleteBill],
+  const value = useMemo<AppData>(
+    () => ({
+      loading,
+      loadError,
+      error,
+      clearError: () => setError(null),
+      reload,
+      accounts: data.accounts,
+      addAccount: (a) => run(() => api.finance.addAccount(a)),
+      deleteAccount: async (id) => void (await run(() => api.finance.deleteAccount(id))),
+      transactions: data.transactions,
+      addTransaction: (t) => run(() => api.finance.addTransaction(t)),
+      updateTransactions: async (ids, patch, addTags) => void (await run(() => api.finance.updateTransactions(ids, patch, addTags))),
+      deleteTransactions: async (ids) => void (await run(() => api.finance.deleteTransactions(ids))),
+      bills: data.bills,
+      addBill: (b) => run(() => api.finance.addBill(b)),
+      markBillPaid: async (id, account) => void (await run(() => api.finance.payBill(id, account))),
+      deleteBill: async (id) => void (await run(() => api.finance.deleteBill(id))),
+      budgets: data.budgets,
+      setBudget: async (c, amount) => void (await run(() => api.finance.setBudget(c, Math.max(0, amount)))),
+      goals: data.goals,
+      addGoal: (g) => run(() => api.finance.addGoal(g)),
+      contributeGoal: async (id, amount) => void (await run(() => api.finance.contributeGoal(id, amount))),
+    }),
+    [data, loading, loadError, error, reload, run],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

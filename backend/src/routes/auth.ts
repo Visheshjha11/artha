@@ -6,6 +6,7 @@ import type { Mailer } from '../mailer.js';
 import { SESSION_COOKIE, publicUser, readCookie, requireAuth } from '../middleware.js';
 import { RateLimiter } from '../rateLimit.js';
 import { burnPasswordCheck, hashPassword, newToken, sha256, verifyPassword } from '../security.js';
+import { DEMO_EMAIL, resetDemoFinance } from '../demo.js';
 import type { JsonStore, User } from '../store.js';
 import { forgotSchema, parseBody, resetSchema, signinSchema, signupSchema } from '../validation.js';
 
@@ -104,6 +105,8 @@ export const createAuthRouter = ({ config, store, mailer }: Deps): Router => {
     }
 
     signinLimiter.reset(key);
+    // The demo account starts from fresh sample data every time, so its dates stay current.
+    if (config.demoAccount && user.email === DEMO_EMAIL) await resetDemoFinance(store, user.id);
     await startSession(res, user.id, rememberMe);
     res.json({ user: publicUser(user) });
   });

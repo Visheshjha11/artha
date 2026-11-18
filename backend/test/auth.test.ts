@@ -19,6 +19,7 @@ const baseConfig = (overrides: Partial<Config> = {}): Config => ({
   rememberMeDays: 30,
   resetTokenMinutes: 30,
   trustProxy: false,
+  demoAccount: false,
   rateLimits: { signinAttempts: 5, signupPerWindow: 100, forgotPerWindow: 100, windowMinutes: 15 },
   ...overrides,
 });

@@ -59,3 +59,26 @@ The link ends in `?token=...`; post that token with a new password to `/api/auth
 - State-changing requests from an unrecognised `Origin` are refused.
 - Google and GitHub sign-in are not implemented; they need OAuth client credentials.
 - The JSON store is meant for one local process. Replace `src/store.ts` with a real database before deploying.
+
+## Finance data
+
+Every signed-in user has their own accounts, transactions, bills, budgets and goals, stored per user in the same JSON file.
+New accounts start completely empty. All routes require a session, and every change answers with the user's full data.
+
+| Method | Path | Body |
+| --- | --- | --- |
+| GET | `/api/finance` | |
+| POST / DELETE | `/api/finance/accounts`, `/api/finance/accounts/:id` | `name`, `kind` (`asset`/`liability`), `type`, `opening` |
+| POST | `/api/finance/transactions` | `name`, `amount` (negative = spend), `date`, `category`, `account` (name), `tags?`, `notes?` |
+| PATCH | `/api/finance/transactions` | `ids`, `patch` (`category`, `excluded`, `notes`, `tags`), `addTags` |
+| POST | `/api/finance/transactions/delete` | `ids` |
+| POST / DELETE | `/api/finance/bills`, `/api/finance/bills/:id` | `name`, `amount`, `dueDate`, `frequency`, `category`, `autopay` |
+| POST | `/api/finance/bills/:id/pay` | `account?` (records a transaction) |
+| PUT | `/api/finance/budgets/:category` | `amount` |
+| POST | `/api/finance/goals`, `/api/finance/goals/:id/contribute` | `name`, `target`, `deadline` / `amount` |
+
+## Demo account
+
+With `DEMO_ACCOUNT=true` (the default outside production) the server creates `artha@gmail.com` / `artha1234` and fills it
+with sample data. The sample data is regenerated on every server start and every demo sign-in, so its dates stay current
+and anything entered there is discarded. This is the only login with sample data.
