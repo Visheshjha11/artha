@@ -1,11 +1,12 @@
 import React, { useMemo, useState } from 'react';
-import { CheckSquare, Plus, Search, Square, Trash2, X } from 'lucide-react';
+import { CheckSquare, Download, EyeOff, Plus, Search, Square, Tag, Trash2, X } from 'lucide-react';
 import { useAppData } from './AppData';
 import { Card, PageHeader } from './AppShell';
 import { CATEGORIES, CATEGORY_KEYS, CategoryChip, CategoryTile } from './categories';
 import { inputClass, primaryBtn, secondaryBtn } from './Modal';
 import {
   ACCOUNTS,
+  downloadCSV,
   formatGroupDate,
   formatINR,
   formatSignedINR,
@@ -24,14 +25,17 @@ const TYPE_OPTIONS: { id: TypeFilter; label: string }[] = [
 ];
 
 export const TransactionsPage: React.FC<{ onAdd: () => void }> = ({ onAdd }) => {
-  const { transactions, deleteTransactions } = useAppData();
+  const { transactions, deleteTransactions, updateTransactions } = useAppData();
+  const [tagInput, setTagInput] = useState('');
+  const [tagFilter, setTagFilter] = useState('all');
   const [query, setQuery] = useState('');
   const [type, setType] = useState<TypeFilter>('all');
   const [category, setCategory] = useState<CategoryKey | 'all'>('all');
   const [account, setAccount] = useState<string>('all');
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
-  const filtersActive = query !== '' || type !== 'all' || category !== 'all' || account !== 'all';
+  const allTags = useMemo(() => [...new Set(transactions.flatMap((t) => t.tags ?? []))].sort(), [transactions]);
+  const filtersActive = query !== '' || type !== 'all' || category !== 'all' || account !== 'all' || tagFilter !== 'all';
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -41,15 +45,18 @@ export const TransactionsPage: React.FC<{ onAdd: () => void }> = ({ onAdd }) => 
         if (type === 'expense' && t.amount >= 0) return false;
         if (category !== 'all' && t.category !== category) return false;
         if (account !== 'all' && t.account !== account) return false;
+        if (tagFilter !== 'all' && !(t.tags ?? []).includes(tagFilter)) return false;
         if (!q) return true;
         return (
           t.name.toLowerCase().includes(q) ||
+          (t.tags ?? []).some((g) => g.toLowerCase().includes(q)) ||
+          (t.notes ?? '').toLowerCase().includes(q) ||
           CATEGORIES[t.category].label.toLowerCase().includes(q) ||
           String(Math.abs(t.amount)).includes(q.replace(/[₹,\s]/g, ''))
         );
       }),
     );
-  }, [transactions, query, type, category, account]);
+  }, [transactions, query, type, category, account, tagFilter]);
 
   const groups = useMemo(() => {
     const map = new Map<string, Transaction[]>();
@@ -78,12 +85,30 @@ export const TransactionsPage: React.FC<{ onAdd: () => void }> = ({ onAdd }) => 
     setType('all');
     setCategory('all');
     setAccount('all');
+    setTagFilter('all');
   };
 
   const removeSelected = () => {
     deleteTransactions([...selected]);
     setSelected(new Set());
   };
+
+  const exportCSV = () => {
+    const rows = filtered.filter((t) => selected.size === 0 || selected.has(t.id));
+    downloadCSV('transactions.csv', [
+      ['Date', 'Name', 'Amount', 'Category', 'Account', 'Tags', 'Notes', 'Excluded'],
+      ...rows.map((t) => [t.date, t.name, t.amount, CATEGORIES[t.category].label, t.account, (t.tags ?? []).join('|'), t.notes ?? '', t.excluded ? 'yes' : 'no']),
+    ]);
+  };
+
+  const applyTag = () => {
+    const tag = tagInput.trim().toLowerCase().replace(/\s+/g, '-');
+    if (!tag) return;
+    updateTransactions([...selected], {}, [tag]);
+    setTagInput('');
+  };
+
+  const allExcluded = [...selected].every((id) => transactions.find((t) => t.id === id)?.excluded);
 
   return (
     <>
@@ -92,10 +117,16 @@ export const TransactionsPage: React.FC<{ onAdd: () => void }> = ({ onAdd }) => 
         title="Transactions"
         subtitle={`${transactions.length} transactions across ${ACCOUNTS.length} accounts`}
         action={
-          <button type="button" onClick={onAdd} className={primaryBtn}>
-            <Plus className="w-3.5 h-3.5" />
-            New
-          </button>
+          <div className="flex gap-2">
+            <button type="button" onClick={exportCSV} className={secondaryBtn}>
+              <Download className="w-3.5 h-3.5" />
+              Export CSV
+            </button>
+            <button type="button" onClick={onAdd} className={primaryBtn}>
+              <Plus className="w-3.5 h-3.5" />
+              New
+            </button>
+          </div>
         }
       />
 
@@ -155,6 +186,20 @@ export const TransactionsPage: React.FC<{ onAdd: () => void }> = ({ onAdd }) => 
               ))}
             </select>
 
+            {allTags.length > 0 && (
+              <select
+                aria-label="Filter by tag"
+                value={tagFilter}
+                onChange={(e) => setTagFilter(e.target.value)}
+                className={`${inputClass} !w-auto !py-1.5 text-xs`}
+              >
+                <option value="all">All tags</option>
+                {allTags.map((g) => (
+                  <option key={g} value={g}>#{g}</option>
+                ))}
+              </select>
+            )}
+
             {filtersActive && (
               <button type="button" onClick={clearFilters} className="inline-flex items-center gap-1 text-xs text-gray-500 hover:text-gray-900 cursor-pointer">
                 <X className="w-3.5 h-3.5" /> Clear
@@ -181,9 +226,36 @@ export const TransactionsPage: React.FC<{ onAdd: () => void }> = ({ onAdd }) => 
 
         {/* Bulk action bar */}
         {selected.size > 0 && (
-          <div className="flex items-center justify-between gap-3 mb-3 px-4 py-2 bg-[#12B76A]/10/70 border border-emerald-100 rounded-xl text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-3 px-4 py-2 bg-[#12B76A]/10 border border-emerald-100 rounded-xl text-xs">
             <span className="font-medium text-emerald-800">{selected.size} selected</span>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <select
+                aria-label="Categorize selected"
+                value=""
+                onChange={(e) => e.target.value && updateTransactions([...selected], { category: e.target.value as CategoryKey })}
+                className={`${inputClass} !w-auto !py-1.5 text-xs`}
+              >
+                <option value="">Categorize…</option>
+                {CATEGORY_KEYS.map((k) => (
+                  <option key={k} value={k}>{CATEGORIES[k].label}</option>
+                ))}
+              </select>
+              <div className="flex items-center gap-1">
+                <input
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && applyTag()}
+                  placeholder="Add tag"
+                  aria-label="Tag to add"
+                  className={`${inputClass} !w-24 !py-1.5 text-xs`}
+                />
+                <button type="button" onClick={applyTag} className={secondaryBtn} aria-label="Apply tag">
+                  <Tag className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <button type="button" onClick={() => updateTransactions([...selected], { excluded: !allExcluded })} className={secondaryBtn}>
+                <EyeOff className="w-3.5 h-3.5" /> {allExcluded ? 'Include' : 'Exclude'}
+              </button>
               <button type="button" onClick={() => setSelected(new Set())} className={secondaryBtn}>Deselect</button>
               <button type="button" onClick={removeSelected} className="inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg text-xs font-medium cursor-pointer">
                 <Trash2 className="w-3.5 h-3.5" /> Delete
@@ -252,7 +324,15 @@ export const TransactionsPage: React.FC<{ onAdd: () => void }> = ({ onAdd }) => 
                         <div className="col-span-7 sm:col-span-5 flex items-center gap-3 min-w-0">
                           <CategoryTile category={t.category} className="!w-8 !h-8 !rounded-full" />
                           <div className="min-w-0">
-                            <p className="font-medium text-gray-900 truncate">{t.name}</p>
+                            <p className={`font-medium truncate ${t.excluded ? 'text-gray-400 line-through' : 'text-gray-900'}`}>{t.name}</p>
+                            {((t.tags?.length ?? 0) > 0 || t.excluded) && (
+                              <p className="flex flex-wrap gap-1 mt-0.5">
+                                {t.excluded && <span className="text-[10px] px-1.5 rounded bg-gray-100 text-gray-500">excluded</span>}
+                                {(t.tags ?? []).map((g) => (
+                                  <span key={g} className="text-[10px] px-1.5 rounded bg-indigo-50 text-indigo-600">#{g}</span>
+                                ))}
+                              </p>
+                            )}
                             <p className="sm:hidden text-[11px] text-gray-400 truncate">{CATEGORIES[t.category].label}</p>
                           </div>
                         </div>

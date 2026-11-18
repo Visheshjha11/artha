@@ -5,6 +5,10 @@ import { Card, PageHeader, type Page } from './AppShell';
 import { CATEGORIES, CategoryTile } from './categories';
 import { primaryBtn } from './Modal';
 import {
+  ACCOUNT_INFO,
+  accountBalance,
+  netWorthSeries,
+  netWorthSummary,
   billBucket,
   daysUntil,
   dayOffset,
@@ -18,11 +22,6 @@ import {
   type CategoryKey,
 } from '../../lib/finance';
 
-// Static balance-sheet totals (matches the landing-page preview); only the
-// cashflow numbers below are computed from the live sample transactions.
-const ASSETS = 13_330_000;
-const LIABILITIES = 5_010_000;
-const NET_WORTH_TREND = [74.2, 75.1, 74.8, 76.9, 78.0, 79.4, 80.1, 81.6, 82.2, 83.2];
 
 const Sparkline: React.FC<{ points: number[] }> = ({ points }) => {
   const w = 220;
@@ -98,6 +97,9 @@ export const HomePage: React.FC<{ name: string; onNavigate: (p: Page) => void; o
         .slice(0, 4),
     [bills],
   );
+  const nw = useMemo(() => netWorthSummary(transactions), [transactions]);
+  const series = useMemo(() => netWorthSeries(transactions, 30), [transactions]);
+  const nwChange = series[0].value ? ((nw.net - series[0].value) / Math.abs(series[0].value)) * 100 : 0;
   const recent = useMemo(() => sortByDateDesc(transactions).slice(0, 6), [transactions]);
   const maxDaily = Math.max(...m.daily.map((d) => d.spend), 1);
 
@@ -120,22 +122,22 @@ export const HomePage: React.FC<{ name: string; onNavigate: (p: Page) => void; o
         <Card className="lg:col-span-5 p-4 sm:p-5">
           <span className="font-mono text-[10px] tracking-wider uppercase text-gray-400 font-bold">Net worth</span>
           <p className="font-mono text-3xl font-semibold tracking-tight text-gray-900 mt-2">
-            {formatINR(ASSETS - LIABILITIES)}
+            {formatINR(nw.net)}
           </p>
-          <p className="text-xs text-[#078C52] font-medium mt-1 flex items-center gap-1">
-            <TrendingUp className="w-3.5 h-3.5" /> +12.1% over 10 months
+          <p className={`text-xs font-medium mt-1 flex items-center gap-1 ${nwChange >= 0 ? 'text-[#078C52]' : 'text-[#F13636]'}`}>
+            <TrendingUp className="w-3.5 h-3.5" /> {nwChange >= 0 ? '+' : ''}{nwChange.toFixed(1)}% over 30 days
           </p>
           <div className="mt-3">
-            <Sparkline points={NET_WORTH_TREND} />
+            <Sparkline points={series.map((p) => p.value)} />
           </div>
           <div className="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-gray-100">
             <div>
               <p className="text-[11px] text-gray-400">Total assets</p>
-              <p className="font-mono text-sm font-semibold text-gray-900">{formatINR(ASSETS)}</p>
+              <p className="font-mono text-sm font-semibold text-gray-900">{formatINR(nw.assets)}</p>
             </div>
             <div>
               <p className="text-[11px] text-gray-400">Total liabilities</p>
-              <p className="font-mono text-sm font-semibold text-gray-900">{formatINR(LIABILITIES)}</p>
+              <p className="font-mono text-sm font-semibold text-gray-900">{formatINR(nw.liabilities)}</p>
             </div>
           </div>
         </Card>
@@ -173,6 +175,29 @@ export const HomePage: React.FC<{ name: string; onNavigate: (p: Page) => void; o
             </div>
           </Card>
         </div>
+
+        {/* Accounts */}
+        <Card className="lg:col-span-12 p-4 sm:p-5">
+          <h2 className="font-semibold text-gray-900 text-base mb-3">Accounts</h2>
+          <div className="grid sm:grid-cols-2 gap-x-8 gap-y-1">
+            {(['asset', 'liability'] as const).map((kind) => (
+              <div key={kind}>
+                <p className="font-mono text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">
+                  {kind === 'asset' ? 'Assets' : 'Liabilities'}
+                </p>
+                {ACCOUNT_INFO.filter((a) => a.kind === kind).map((a) => (
+                  <div key={a.name} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0 text-sm">
+                    <div className="min-w-0">
+                      <p className="font-medium text-gray-900 truncate">{a.name}</p>
+                      <p className="text-[11px] text-gray-400">{a.type}</p>
+                    </div>
+                    <span className="font-mono font-semibold text-gray-900">{formatINR(accountBalance(a, transactions))}</span>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </Card>
 
         {/* Spending by category */}
         <Card className="lg:col-span-5 p-4 sm:p-5">

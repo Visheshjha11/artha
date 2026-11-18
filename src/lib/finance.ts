@@ -23,6 +23,11 @@ export interface Transaction {
   date: string;
   category: CategoryKey;
   account: string;
+  /** Free-form labels, e.g. "work", "reimbursable". */
+  tags?: string[];
+  notes?: string;
+  /** Hidden from reports and budgets but kept in account history. */
+  excluded?: boolean;
 }
 
 export type BillFrequency = 'Monthly' | 'Quarterly' | 'Yearly';
@@ -237,7 +242,7 @@ export const monthLabel = (ym: string, short = false) => {
   return new Date(y, m - 1, 1).toLocaleDateString('en-IN', short ? { month: 'short' } : { month: 'long', year: 'numeric' });
 };
 
-export const isExpense = (t: Transaction) => t.amount < 0 && t.category !== 'income' && t.category !== 'interest';
+export const isExpense = (t: Transaction) => !t.excluded && t.amount < 0 && t.category !== 'income' && t.category !== 'interest';
 
 /** Total spent per category, for transactions whose month is in `months`. */
 export const spendByCategory = (list: Transaction[], months: string[]) => {
@@ -262,3 +267,69 @@ export const SEED_GOALS: Goal[] = [
   { id: 'g2', name: 'Goa trip', target: 120000, saved: 45000, deadline: dayOffset(210) },
   { id: 'g3', name: 'New laptop', target: 150000, saved: 140000, deadline: dayOffset(60) },
 ];
+
+/* ------------------------- accounts & net worth ------------------------- */
+
+export type AccountKind = 'asset' | 'liability';
+
+export interface AccountInfo {
+  name: string;
+  kind: AccountKind;
+  type: string;
+  /** Balance on the day before the first seeded transaction (INR). */
+  opening: number;
+}
+
+export const ACCOUNT_INFO: AccountInfo[] = [
+  { name: ACCOUNTS[0], kind: 'asset', type: 'Savings', opening: 1250000 },
+  { name: ACCOUNTS[1], kind: 'liability', type: 'Credit card', opening: 42000 },
+  { name: ACCOUNTS[2], kind: 'asset', type: 'Cash', opening: 8000 },
+  { name: 'Mutual Funds', kind: 'asset', type: 'Investment', opening: 940000 },
+  { name: 'Home Loan', kind: 'liability', type: 'Loan', opening: 2150000 },
+];
+
+/** Current balance of an account: opening balance plus every transaction on it. */
+export const accountBalance = (info: AccountInfo, list: Transaction[]) => {
+  const delta = list.filter((t) => t.account === info.name).reduce((n, t) => n + t.amount, 0);
+  // Liabilities are stored as a positive amount owed; spending raises it.
+  return info.kind === 'liability' ? info.opening - delta : info.opening + delta;
+};
+
+export const netWorthSummary = (list: Transaction[]) => {
+  let assets = 0;
+  let liabilities = 0;
+  for (const a of ACCOUNT_INFO) {
+    const b = accountBalance(a, list);
+    if (a.kind === 'asset') assets += b;
+    else liabilities += b;
+  }
+  return { assets, liabilities, net: assets - liabilities };
+};
+
+/** Net worth at the end of each of the last `days` days (oldest first). */
+export const netWorthSeries = (list: Transaction[], days = 30) => {
+  const today = toISO(startOfToday());
+  const { net } = netWorthSummary(list);
+  const byDay = new Map<string, number>();
+  for (const t of list) byDay.set(t.date, (byDay.get(t.date) ?? 0) + t.amount);
+  const out: { date: string; value: number }[] = [];
+  let running = net;
+  for (let i = 0; i < days; i++) {
+    const date = dayOffset(-i);
+    out.unshift({ date, value: running });
+    if (date <= today) running -= byDay.get(date) ?? 0;
+  }
+  return out;
+};
+
+export const toCSV = (rows: (string | number)[][]) =>
+  rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+
+export const downloadCSV = (filename: string, rows: (string | number)[][]) => {
+  const url = URL.createObjectURL(new Blob([toCSV(rows)], { type: 'text/csv;charset=utf-8' }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+};

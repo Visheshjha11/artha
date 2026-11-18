@@ -22,6 +22,7 @@ interface AppData {
   contributeGoal: (id: string, amount: number) => void;
   addTransaction: (t: Omit<Transaction, 'id'>) => void;
   deleteTransactions: (ids: string[]) => void;
+  updateTransactions: (ids: string[], patch: Partial<Omit<Transaction, 'id'>>, addTags?: string[]) => void;
   addBill: (b: Omit<Bill, 'id' | 'status' | 'paidOn'>) => void;
   markBillPaid: (id: string) => void;
   deleteBill: (id: string) => void;
@@ -61,6 +62,20 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setTransactions((prev) => prev.filter((t) => !drop.has(t.id)));
   }, []);
 
+  const updateTransactions = useCallback(
+    (ids: string[], patch: Partial<Omit<Transaction, 'id'>>, addTags?: string[]) => {
+      const set = new Set(ids);
+      setTransactions((prev) =>
+        prev.map((t) =>
+          set.has(t.id)
+            ? { ...t, ...patch, tags: addTags ? [...new Set([...(t.tags ?? []), ...addTags])] : (patch.tags ?? t.tags) }
+            : t,
+        ),
+      );
+    },
+    [],
+  );
+
   const addBill = useCallback((b: Omit<Bill, 'id' | 'status' | 'paidOn'>) => {
     setBills((prev) => [...prev, { ...b, id: nextId('b'), status: 'unpaid' }]);
   }, []);
@@ -91,8 +106,8 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
   }, []);
 
   const value = useMemo(
-    () => ({ transactions, bills, budgets, setBudget, goals, addGoal, contributeGoal, addTransaction, deleteTransactions, addBill, markBillPaid, deleteBill }),
-    [transactions, bills, budgets, setBudget, goals, addGoal, contributeGoal, addTransaction, deleteTransactions, addBill, markBillPaid, deleteBill],
+    () => ({ transactions, bills, budgets, setBudget, goals, addGoal, contributeGoal, addTransaction, deleteTransactions, updateTransactions, addBill, markBillPaid, deleteBill }),
+    [transactions, bills, budgets, setBudget, goals, addGoal, contributeGoal, addTransaction, deleteTransactions, updateTransactions, addBill, markBillPaid, deleteBill],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
